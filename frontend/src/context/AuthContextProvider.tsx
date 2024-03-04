@@ -4,14 +4,22 @@ import axios from "axios";
 
 import getCommonOptions from '../helpers/getCommonOptions';
 
+export type GlobalUserType={
+    email: string,
+    id:number,
+    phone: string,
+    role: string,
+    username: string
+}
+
 export type AuthContextType = {
     isAuthenticated: boolean | null,
     setIsAuthenticated: (value: boolean) => void,
-    user: any,
-    setUser: (value: any) => void
+    user: null | GlobalUserType,
+    setUser: (value: GlobalUserType) => void
 }
 
-export const AuthContext = createContext({
+export const AuthContext = createContext<AuthContextType>({
     isAuthenticated: null,
     setIsAuthenticated: () => { },
     user: null,
@@ -20,7 +28,7 @@ export const AuthContext = createContext({
 
 export default function AuthContextProvider({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<GlobalUserType | null>(null);
 
     const loadAuthUser = () => {
         const authToken = localStorage.getItem("authToken");

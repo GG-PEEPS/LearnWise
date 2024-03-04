@@ -8,6 +8,7 @@ import { RouterProvider } from "react-router-dom";
 import routes from './config/routes';
 import { SnackbarProvider } from 'notistack'
 import AuthContextProvider from './context/AuthContextProvider';
+import { CssBaseline } from '@mui/material';
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
     <>
       <SnackbarProvider>
         <AuthContextProvider>
-
+        <CssBaseline />
           <RouterProvider router={routes} />
         </AuthContextProvider>
       </SnackbarProvider>
