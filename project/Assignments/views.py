@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Assignments
 from .serializers import AssignmentsSerializer
 from django.utils import timezone
+from rest_framework import status
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -110,3 +111,30 @@ def add_assignment(request):
         })
     else:
         return Response(serializer.errors, status=400)
+    
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def get_assignment(request):
+    try:
+        assignment_id=request.query_params['assignmentId']
+        assignment = Assignments.objects.get(id=assignment_id)
+    except Assignments.DoesNotExist:
+        return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = AssignmentsSerializer(assignment)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def edit_assignment(request):
+    try:
+        assignment_id=request.query_params['assignmentId']
+        assignment = Assignments.objects.get(id=assignment_id)
+    except Assignments.DoesNotExist:
+        return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = AssignmentsSerializer(instance=assignment, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

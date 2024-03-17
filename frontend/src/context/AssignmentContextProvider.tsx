@@ -21,6 +21,13 @@ export type AssignmentContextType = {
 	addAssignment: (
 		assignment: Omit<Assignment, "id" | "completed" | "user">
 	) => void;
+	getAssignment: (assignmentId: Assignment["id"]) => void;
+	editAssignment: (
+		assignmentId: number,
+		title: string,
+		platform: string,
+		deadline: string
+	) => void;
 };
 
 export const AssignmentContext = createContext<AssignmentContextType>({
@@ -30,6 +37,8 @@ export const AssignmentContext = createContext<AssignmentContextType>({
 
 	toggleComplete: () => {},
 	addAssignment: () => {},
+	getAssignment: () => {},
+	editAssignment: () => {},
 });
 
 export default function AssignmentContextProvider({
@@ -110,6 +119,55 @@ export default function AssignmentContextProvider({
 			});
 	};
 
+	const getAssignment = (assignmentId: number) => {
+		axios
+			.get(
+				import.meta.env.VITE_BACKEND_URL +
+					"/assignments/getAssignment?assignmentId=" +
+					assignmentId,
+				getCommonOptions()
+			)
+			.then((res) => {
+				const data = res.data;
+				setPendingAssignments(data.pending_assignments);
+				setOverdueAssignments(data.overdue_assignments);
+				setCompletedAssignments(data.completed_assignments);
+			})
+			.catch((err) => {
+				enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
+			});
+	};
+
+	const editAssignment = (
+		assignmentId: number,
+		title: string,
+		platform: string,
+		deadline: string
+	) => {
+		axios
+			.post(
+				import.meta.env.VITE_BACKEND_URL +
+					"/assignments/editAssignment?assignmentId=" +
+					assignmentId,
+				{
+					assignmentId,
+					title,
+					platform,
+					deadline,
+				},
+				getCommonOptions()
+			)
+			.then((res) => {
+				const data = res.data;
+				setPendingAssignments(data.pending_assignments);
+				setOverdueAssignments(data.overdue_assignments);
+				setCompletedAssignments(data.completed_assignments);
+			})
+			.catch((err) => {
+				enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
+			});
+	};
+
 	return (
 		<AssignmentContext.Provider
 			value={{
@@ -118,6 +176,10 @@ export default function AssignmentContextProvider({
 				completed_assignments: completed_assignments,
 				toggleComplete: toggleComplete,
 				addAssignment: addAssignment,
+
+				getAssignment: getAssignment,
+
+				editAssignment: editAssignment,
 			}}
 		>
 			{children}
