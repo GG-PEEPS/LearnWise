@@ -21,7 +21,7 @@ export type AssignmentContextType = {
 	addAssignment: (
 		assignment: Omit<Assignment, "id" | "completed" | "user">
 	) => void;
-	getAssignment: (assignmentId: Assignment["id"]) => void;
+	getAssignment: (assignmentId: Assignment["id"]) => Assignment | null;
 	editAssignment: (
 		assignmentId: number,
 		title: string,
@@ -37,7 +37,9 @@ export const AssignmentContext = createContext<AssignmentContextType>({
 
 	toggleComplete: () => {},
 	addAssignment: () => {},
-	getAssignment: () => {},
+	getAssignment: () => {
+		return null;
+	},
 	editAssignment: () => {},
 });
 
@@ -119,7 +121,8 @@ export default function AssignmentContextProvider({
 			});
 	};
 
-	const getAssignment = (assignmentId: number) => {
+	const getAssignment = (assignmentId: number): Assignment | null => {
+		let result = null;
 		axios
 			.get(
 				import.meta.env.VITE_BACKEND_URL +
@@ -129,13 +132,13 @@ export default function AssignmentContextProvider({
 			)
 			.then((res) => {
 				const data = res.data;
-				setPendingAssignments(data.pending_assignments);
-				setOverdueAssignments(data.overdue_assignments);
-				setCompletedAssignments(data.completed_assignments);
+				result = data;
+				console.log(data);
 			})
 			.catch((err) => {
 				enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
 			});
+		return result;
 	};
 
 	const editAssignment = (

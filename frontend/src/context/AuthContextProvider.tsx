@@ -38,7 +38,6 @@ export default function AuthContextProvider({ children }: { children: React.Reac
         }
         axios.get(import.meta.env.VITE_BACKEND_URL+"/api/auth/users/me/", getCommonOptions())
             .then((res) => {
-                console.log('[AuthContextProvider] loadAuthUser res:', res);
                 setUser(res.data);
                 setIsAuthenticated(true);
             }).catch(() => {
