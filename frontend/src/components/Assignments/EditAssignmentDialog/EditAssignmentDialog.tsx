@@ -32,7 +32,9 @@ const EditAssignmentDialog = ({
 	console.log(initialDeadline, new Date(initialDeadline));
 	const [title, setTitle] = useState<string>(initialTitle);
 	const [platform, setPlatform] = useState<string>(initialPlatform);
-	const [deadline, setDeadline] = useState<string>(initialDeadline);
+	const [deadline, setDeadline] = useState<string>(
+		initialDeadline.split("T")[0]
+	);
 	const { editAssignment } = useContext(AssignmentContext);
 
 	const handleClose = () => {
