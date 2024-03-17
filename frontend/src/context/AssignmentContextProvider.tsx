@@ -148,7 +148,7 @@ export default function AssignmentContextProvider({
 		deadline: string
 	) => {
 		axios
-			.post(
+			.put(
 				import.meta.env.VITE_BACKEND_URL +
 					"/assignments/editAssignment?assignmentId=" +
 					assignmentId,

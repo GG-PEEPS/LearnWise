@@ -46,8 +46,8 @@ const EditAssignmentDialog = ({
 			enqueueSnackbar("Please fill all the fields", { variant: "error" });
 			return;
 		}
+		editAssignment(assignmentId, title, platform, deadline);
 		handleClose();
-		return;
 	};
 
 	return (

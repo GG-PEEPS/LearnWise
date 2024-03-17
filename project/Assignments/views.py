@@ -134,7 +134,31 @@ def edit_assignment(request):
         return Response({"error": "Assignment not found"}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = AssignmentsSerializer(instance=assignment, data=request.data, partial=True)
+
+    user=request.user
+
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        assignments = Assignments.objects.filter(user=user)
+
+        pending_assignments = []
+        overdue_assignments = []
+        completed_assignments = []
+        for assignment in assignments:
+            if assignment.completed:
+                completed_assignments.append(assignment)
+            elif assignment.deadline < timezone.now():
+                overdue_assignments.append(assignment)
+            else:
+                pending_assignments.append(assignment)
+
+        pending_serializer = AssignmentsSerializer(pending_assignments, many=True)
+        overdue_serializer = AssignmentsSerializer(overdue_assignments, many=True)
+        completed_serializer = AssignmentsSerializer(completed_assignments, many=True)
+
+        return Response({
+            'pending_assignments': pending_serializer.data,
+            'overdue_assignments': overdue_serializer.data,
+            'completed_assignments': completed_serializer.data
+        })
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
