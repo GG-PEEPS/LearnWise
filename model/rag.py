@@ -42,7 +42,6 @@ def pdf2vec(pdf_directory,embeddings_model):
     texts = text_splitter.split_text(context)
 
     vectors = Chroma.from_texts(texts, embeddings_model).as_retriever(search_kwargs={"k": 5})
-    
     return vectors
 
 
@@ -68,11 +67,11 @@ if __name__ == "__main__":
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
 
-    pdf_directory = "/Users/rahuldandona/Desktop/Projects/LearnWise/data"
+    pdf_directory = os.getcwd()+"/data"
     vector_index = pdf2vec(pdf_directory,embeddings_model)
 
 
-    question = "What is CIA in 1000 words?"
+    question = "What is CIA triad?"
     x = create_qa_chain_model(gemini_model,vector_index,question)
 
     print(x['result'])
