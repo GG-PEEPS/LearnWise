@@ -21,7 +21,8 @@ from user.urls import urlpatterns as user_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('assignments/',include('Assignments.urls'))
+    path('assignments/',include('Assignments.urls')),
+    path('study/',include('study.urls')),
 ]
 
 urlpatterns += user_urlpatterns

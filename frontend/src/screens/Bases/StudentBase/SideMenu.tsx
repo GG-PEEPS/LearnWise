@@ -9,7 +9,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import CreateIcon from "@mui/icons-material/Create";
-
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import { NavLink } from "react-router-dom";
 
 import { Box } from "@mui/system";
@@ -30,6 +30,12 @@ const listItems = [
 		to: "/assignments",
 		name: "Assignments",
 		icon: <AssignmentTurnedInIcon />,
+	},
+	{
+		key: "Subjects",
+		to: "/subjects",
+		name: "Subjects",
+		icon: <CollectionsBookmarkIcon />,
 	},
 ];
 

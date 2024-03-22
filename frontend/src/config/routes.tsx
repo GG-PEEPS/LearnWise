@@ -6,6 +6,8 @@ import { RequireAuth } from "../helpers/RequireAuth";
 import StudentBase from "../screens/Bases/StudentBase/StudentBase";
 import Assignments from "../screens/Assignments/Assignments";
 import AssignmentContextProvider from "../context/AssignmentContextProvider";
+import Subjects from "../screens/Subjects/Subjects";
+import SubjectContextProvider from "../context/SubjectContextProvider";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -27,6 +29,14 @@ export default createBrowserRouter([
 							<AssignmentContextProvider>
 								<Assignments />
 							</AssignmentContextProvider>
+						),
+					},
+					{
+						path: "/subjects",
+						element: (
+							<SubjectContextProvider>
+								<Subjects />
+							</SubjectContextProvider>
 						),
 					},
 				],
