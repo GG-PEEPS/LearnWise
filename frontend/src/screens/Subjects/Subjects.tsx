@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CreateSubjectDialog from "../../components/Subjects/CreateSubjectDialog/CreateSubjectDialog";
-import { SubjectContext } from "../../context/SubjectContextProvider";
+import { SubjectContext } from "../../context/SubjectsContextProvider";
 import SubjectDisplay from "../../components/Subjects/SubjectDisplay/SubjectDisplay";
 
 type Props = {};

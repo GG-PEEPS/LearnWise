@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { enqueueSnackbar } from "notistack";
-import { SubjectContext } from "../../../context/SubjectContextProvider";
+import { SubjectContext } from "../../../context/SubjectsContextProvider";
 
 type Props = {
 	open: boolean;

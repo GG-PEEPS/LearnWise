@@ -7,8 +7,9 @@ import StudentBase from "../screens/Bases/StudentBase/StudentBase";
 import Assignments from "../screens/Assignments/Assignments";
 import AssignmentContextProvider from "../context/AssignmentContextProvider";
 import Subjects from "../screens/Subjects/Subjects";
-import SubjectContextProvider from "../context/SubjectContextProvider";
+import SubjectContextProvider from "../context/SubjectsContextProvider";
 import Subject from "../screens/Subjects/Subject/Subject";
+import SubjectChat from "../screens/SubjectChat/SubjectChat";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -43,6 +44,10 @@ export default createBrowserRouter([
 					{
 						path: "/subjects/:subjectId",
 						element: <Subject />,
+					},
+					{
+						path: "/subjects/:subjectId/chat",
+						element: <SubjectChat />,
 					},
 				],
 			},
