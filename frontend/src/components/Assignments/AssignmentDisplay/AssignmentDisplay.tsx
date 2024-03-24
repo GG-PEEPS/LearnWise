@@ -36,7 +36,7 @@ const AssignmentDisplay = ({ title, assignments }: Props) => {
 				}}
 			>
 				{assignments.map((assignment) => (
-					<Grid item key={assignment.id} xs={4}>
+					<Grid item key={assignment.id} lg={4} md={6} xs={12}>
 						<AssignmentItem assignment={assignment} />
 					</Grid>
 				))}
