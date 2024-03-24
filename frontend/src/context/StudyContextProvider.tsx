@@ -20,12 +20,14 @@ export type StudyContextType = {
 	subjectName: string;
 	pdfList: pdfType[];
 	deleteDocument: (id: number) => void;
+	addDocument: (selectedFile: File) => void;
 };
 
 export const StudyContext = createContext<StudyContextType>({
 	subjectName: "",
 	pdfList: [],
 	deleteDocument: async () => {},
+	addDocument: async () => {},
 });
 
 const StudyContextProvider = ({ children }: Props) => {
@@ -67,13 +69,33 @@ const StudyContextProvider = ({ children }: Props) => {
 			});
 		}
 	};
+	const addDocument = async (selectedFile: File) => {
+		try {
+			const formData = new FormData();
+			formData.append("pdf_file", selectedFile as Blob);
+			const res = await axios.post(
+				import.meta.env.VITE_BACKEND_URL + "/study/addDocument/" + subjectId,
+				formData,
+				getCommonOptions()
+			);
+			setPdfList([...pdfList, res.data]);
 
+			enqueueSnackbar("Document Added Successfully", {
+				variant: "success",
+			});
+		} catch (err) {
+			enqueueSnackbar(formatHttpApiError(err), {
+				variant: "error",
+			});
+		}
+	};
 	return (
 		<StudyContext.Provider
 			value={{
 				subjectName,
 				pdfList,
-				deleteDocument
+				deleteDocument,
+				addDocument,
 			}}
 		>
 			{children}

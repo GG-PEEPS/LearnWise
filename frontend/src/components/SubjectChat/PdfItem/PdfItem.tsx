@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StudyContext, pdfType } from "../../context/StudyContextProvider";
+import { StudyContext, pdfType } from "../../../context/StudyContextProvider";
 import { Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
