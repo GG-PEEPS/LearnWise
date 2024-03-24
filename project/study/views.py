@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .models import Subject
-from .serializers import SubjectSerializer
+from .models import Subject,Document
+from .serializers import SubjectSerializer, DocumentSerializer
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -46,3 +46,35 @@ def subject_detail(request, subject_id):
     elif request.method == 'DELETE':
         subject.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def add_document(request, subject_id):
+    if request.method == 'POST':
+        file_title = request.data.get('pdf_file').name 
+        request.data['title'] = file_title 
+        serializer = DocumentSerializer(data=request.data)
+        serializer.initial_data['subject'] = subject_id
+        if serializer.is_valid():
+            serializer.save(subject_id=subject_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_document(request, document_id):
+    try:
+        document = Document.objects.get(id=document_id)
+    except Document.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'DELETE':
+        document.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+@api_view(['GET'])
+def get_all_documents(request, subject_id):
+    if request.method == 'GET':
+        documents = Document.objects.filter(subject_id=subject_id)
+        serializer = DocumentSerializer(documents, many=True)
+        return Response(serializer.data)

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { Outlet, createBrowserRouter } from "react-router-dom";
 import Login from "../screens/Auth/Login/Login";
 import { RequireNotAuth } from "../helpers/RequireNotAuth";
 import Register from "../screens/Auth/Register/Register";
@@ -10,6 +10,7 @@ import Subjects from "../screens/Subjects/Subjects";
 import SubjectContextProvider from "../context/SubjectsContextProvider";
 import Subject from "../screens/Subjects/Subject/Subject";
 import SubjectChat from "../screens/SubjectChat/SubjectChat";
+import StudyContextProvider from "../context/StudyContextProvider";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -43,11 +44,21 @@ export default createBrowserRouter([
 					},
 					{
 						path: "/subjects/:subjectId",
-						element: <Subject />,
-					},
-					{
-						path: "/subjects/:subjectId/chat",
-						element: <SubjectChat />,
+						element: (
+							<StudyContextProvider>
+								<Outlet />
+							</StudyContextProvider>
+						),
+						children: [
+							{
+								path: "/subjects/:subjectId/chat",
+								element: <SubjectChat />,
+							},
+							{
+								path: "/subjects/:subjectId",
+								element: <Subject />,
+							},
+						],
 					},
 				],
 			},
