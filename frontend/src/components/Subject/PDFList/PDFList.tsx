@@ -1,12 +1,14 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { StudyContext } from "../../../context/StudyContextProvider";
 
 type Props = {};
 
 const PDFList = (props: Props) => {
 	const navigate = useNavigate();
 	const { subjectId } = useParams();
+	const { pdfList } = useContext(StudyContext);
 	return (
 		<Box
 			component={Paper}
@@ -18,7 +20,18 @@ const PDFList = (props: Props) => {
 				justifyContent: "space-between",
 			}}
 		>
-			<Typography variant="h5">PDFs Uploaded</Typography>
+			<Box
+				sx={{
+					flex: 1,
+				}}
+			>
+				<Typography variant="h5">PDFs Uploaded</Typography>
+				{pdfList.map((pdf) => (
+					<Typography key={pdf.id} variant="body1"  sx={{ mt: 1 }}>
+						{pdf.title}
+					</Typography>
+				))}
+			</Box>
 			<Box
 				sx={{
 					display: "flex",

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import getCommonOptions from "../helpers/getCommonOptions";
 import { enqueueSnackbar } from "notistack";
@@ -31,6 +31,7 @@ export type StudyContextType = {
 	addDocument: (selectedFile: File) => void;
 	chats: chatType[];
 	addChat: (message: string) => void;
+	totalTimeSpent: number;
 };
 
 export const StudyContext = createContext<StudyContextType>({
@@ -40,6 +41,7 @@ export const StudyContext = createContext<StudyContextType>({
 	addDocument: async () => {},
 	chats: [],
 	addChat: () => {},
+	totalTimeSpent: 0,
 });
 
 const StudyContextProvider = ({ children }: Props) => {
@@ -49,6 +51,23 @@ const StudyContextProvider = ({ children }: Props) => {
 	);
 	const [pdfList, setPdfList] = React.useState<pdfType[]>([]);
 	const [chats, setChats] = React.useState<chatType[]>([]);
+	const [totalTimeSpent, setTotalTimeSpent] = useState(0);
+	const [startTime, setStartTime] = useState(() => {
+		const storedStartTime = parseInt(
+			localStorage.getItem(`startTime_${subjectId}`)
+		);
+		return storedStartTime || Date.now();
+	});
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			const currentTime = Date.now();
+			const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+			setTotalTimeSpent((prevTime) => elapsedTime);
+			localStorage.setItem(`startTime_${subjectId}`, startTime.toString());
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	}, [subjectId, startTime]);
 
 	useEffect(() => {
 		axios
@@ -150,6 +169,7 @@ const StudyContextProvider = ({ children }: Props) => {
 				addDocument,
 				chats,
 				addChat,
+				totalTimeSpent,
 			}}
 		>
 			{children}
