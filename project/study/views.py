@@ -77,9 +77,13 @@ def delete_document(request, document_id):
 @api_view(['GET'])
 def get_all_documents(request, subject_id):
     if request.method == 'GET':
+        subject=Subject.objects.get(id=subject_id)
         documents = Document.objects.filter(subject_id=subject_id)
         serializer = DocumentSerializer(documents, many=True)
-        return Response(serializer.data)
+        return Response({
+            "documents": serializer.data,
+            "subject_name": subject.name
+        })
     
 @api_view(['GET'])
 def get_faq(request,subject_id):
