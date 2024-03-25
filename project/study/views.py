@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
+from .chatviews import *
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))

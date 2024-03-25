@@ -16,11 +16,21 @@ export type pdfType = {
 	pdf_file: string;
 };
 
+export type chatType = {
+	id: number;
+	subject: number;
+	created_at: string;
+	from_type: string;
+	message: string;
+};
+
 export type StudyContextType = {
 	subjectName: string;
 	pdfList: pdfType[];
 	deleteDocument: (id: number) => void;
 	addDocument: (selectedFile: File) => void;
+	chats: chatType[];
+	addChat: (message: string) => void;
 };
 
 export const StudyContext = createContext<StudyContextType>({
@@ -28,6 +38,8 @@ export const StudyContext = createContext<StudyContextType>({
 	pdfList: [],
 	deleteDocument: async () => {},
 	addDocument: async () => {},
+	chats: [],
+	addChat: () => {},
 });
 
 const StudyContextProvider = ({ children }: Props) => {
@@ -36,6 +48,7 @@ const StudyContextProvider = ({ children }: Props) => {
 		"Subject " + subjectId
 	);
 	const [pdfList, setPdfList] = React.useState<pdfType[]>([]);
+	const [chats, setChats] = React.useState<chatType[]>([]);
 
 	useEffect(() => {
 		axios
@@ -45,6 +58,22 @@ const StudyContextProvider = ({ children }: Props) => {
 			)
 			.then((res) => {
 				setPdfList(res.data);
+			})
+			.catch((err) => {
+				enqueueSnackbar(formatHttpApiError(err), {
+					variant: "error",
+				});
+			});
+		axios
+			.get(
+				import.meta.env.VITE_BACKEND_URL +
+					"/study/getSubjectChats/" +
+					subjectId,
+				getCommonOptions()
+			)
+			.then((res) => {
+				setChats(res.data);
+				console.log(res.data);
 			})
 			.catch((err) => {
 				enqueueSnackbar(formatHttpApiError(err), {
@@ -89,6 +118,29 @@ const StudyContextProvider = ({ children }: Props) => {
 			});
 		}
 	};
+
+	const addChat = (message: string) => {
+		setChats([
+			...chats,
+			{ id: 0, subject: 0, created_at: "", from_type: "USER", message },
+		]);
+		axios
+			.post(
+				import.meta.env.VITE_BACKEND_URL + "/study/createChat/" + subjectId,
+				{
+					message: message,
+				},
+				getCommonOptions()
+			)
+			.then((res) => {
+				setChats(res.data);
+			})
+			.catch((err) => {
+				enqueueSnackbar(formatHttpApiError(err), {
+					variant: "error",
+				});
+			});
+	};
 	return (
 		<StudyContext.Provider
 			value={{
@@ -96,6 +148,8 @@ const StudyContextProvider = ({ children }: Props) => {
 				pdfList,
 				deleteDocument,
 				addDocument,
+				chats,
+				addChat,
 			}}
 		>
 			{children}

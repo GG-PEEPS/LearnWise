@@ -8,4 +8,6 @@ urlpatterns = [
     path('addDocument/<int:subject_id>',views.add_document),
     path('getDocuments/<int:subject_id>',views.get_all_documents),
     path('deleteDocument/<int:document_id>',views.delete_document),
+    path('getSubjectChats/<int:subject_id>',views.get_subject_chats),
+    path('createChat/<int:subject_id>',views.create_chat),
 ]

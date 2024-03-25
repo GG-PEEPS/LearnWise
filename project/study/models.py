@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.conf import settings
+from django.utils import timezone
 
 class Subject(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -9,11 +10,27 @@ class Subject(models.Model):
     def __str__(self):
         return self.name
 
+def pdf_upload_path(instance, filename):
+    return f'notes/{instance.subject.id}/{filename}'
 class Document(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    pdf_file = models.FileField(upload_to='pdfs/',null=True, blank=True)
+    pdf_file = models.FileField(upload_to=pdf_upload_path,null=True, blank=True)
 
     def __str__(self):
         return self.title
+    
+class Chat(models.Model):
+    SUBJECT_CHOICES = (
+        ('USER', 'User'),
+        ('SYSTEM', 'System'),
+    )
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+    from_type = models.CharField(max_length=10, choices=SUBJECT_CHOICES)
+    message = models.TextField()
+
+    def __str__(self):
+        return f"{self.from_type} - {self.subject.name} - {self.created_at}"

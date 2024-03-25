@@ -4,6 +4,7 @@ import { StudyContext } from "../../context/StudyContextProvider";
 import { Box, Button, Paper, Toolbar, Typography } from "@mui/material";
 import PdfItem from "../../components/SubjectChat/PdfItem/PdfItem";
 import PdfUploadDialog from "../../components/SubjectChat/PdfUploadDialog/PdfUploadDialog";
+import Chat from "../../components/SubjectChat/Chat/Chat";
 
 type Props = {};
 
@@ -11,17 +12,17 @@ const SubjectChat = (props: Props) => {
 	const { subjectName, pdfList } = useContext(StudyContext);
 	const [open, setOpen] = useState(false);
 
-	const handleUploadClick=()=>{
-		setOpen(true)
-	}
-
+	const handleUploadClick = () => {
+		setOpen(true);
+	};
 
 	return (
 		<>
-		{open && <PdfUploadDialog open={open} setOpen={setOpen} />}
+			{open && <PdfUploadDialog open={open} setOpen={setOpen} />}
 			<Box
 				sx={{
 					display: "flex",
+					height: "100%",
 				}}
 			>
 				<Box
@@ -33,9 +34,11 @@ const SubjectChat = (props: Props) => {
 					<Box
 						sx={{
 							paddingTop: (theme) => theme.spacing(3),
+							width: "100%",
+							height: "calc(100vh - 88px)",
 						}}
 					>
-						<Typography variant="h4">{subjectName}</Typography>
+						<Chat />
 					</Box>
 				</Box>
 				<Box
@@ -73,12 +76,12 @@ const SubjectChat = (props: Props) => {
 								flex: 1,
 							}}
 						>
-							{pdfList.map((pdf) => (
-								<PdfItem pdf={pdf} />
+							{pdfList.map((pdf, index) => (
+								<PdfItem pdf={pdf} key={index} />
 							))}
 						</Box>
 						<Box>
-							<Button variant="contained" fullWidth  onClick={handleUploadClick}>
+							<Button variant="contained" fullWidth onClick={handleUploadClick}>
 								Upload PDF
 							</Button>
 						</Box>
