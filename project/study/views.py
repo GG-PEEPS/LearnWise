@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
 from .chatviews import *
+from .ragmodel import getFAQ
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -79,3 +80,14 @@ def get_all_documents(request, subject_id):
         documents = Document.objects.filter(subject_id=subject_id)
         serializer = DocumentSerializer(documents, many=True)
         return Response(serializer.data)
+    
+@api_view(['GET'])
+def get_faq(request,subject_id):
+    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
+    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    pdf_directory = os.getcwd()+"/study/mediafiles/notes/"+str(subject_id)
+    vector_index = pdf2vec(pdf_directory,embeddings_model)
+
+    x=getFAQ(gemini_model,vector_index)
+
+    return Response(json.loads(x['result']),status=status.HTTP_200_OK)

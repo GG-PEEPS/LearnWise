@@ -11,6 +11,7 @@ import SubjectContextProvider from "../context/SubjectsContextProvider";
 import Subject from "../screens/Subjects/Subject/Subject";
 import SubjectChat from "../screens/SubjectChat/SubjectChat";
 import StudyContextProvider from "../context/StudyContextProvider";
+import SubjectFAQ from "../screens/SubjectFAQ/SubjectFAQ";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -53,6 +54,10 @@ export default createBrowserRouter([
 							{
 								path: "/subjects/:subjectId/chat",
 								element: <SubjectChat />,
+							},
+							{
+								path: "/subjects/:subjectId/faq",
+								element: <SubjectFAQ />,
 							},
 							{
 								path: "/subjects/:subjectId",

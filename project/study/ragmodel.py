@@ -65,6 +65,30 @@ def create_qa_chain_model(gemini_pro_model, vector_index, question):
 
     return result
 
+def getFAQ(gemini_pro_model, vector_index):
+    template = """
+    Use the following pieces of context to make a question paper containing 20 questions along with the answer. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer as concise as possible.
+    {context}
+    Helpful Answer: i want the response in one single string {{"questions":[<Questions with answers>]}}
+    """
+    
+    QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
+
+    # Create a RetrievalQA instance with questions
+    qa_chain = RetrievalQA.from_chain_type(
+        gemini_pro_model,
+        retriever=vector_index,
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
+    )
+    question="What is the most probable questions from the context?"
+    # Generate response using the model
+    result = qa_chain({"query": question})
+
+    return result
+
+
+
 if __name__ == "__main__":
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)

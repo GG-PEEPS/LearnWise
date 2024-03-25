@@ -23,6 +23,10 @@ export type chatType = {
 	from_type: string;
 	message: string;
 };
+export type questionType = {
+	question: string;
+	answer: string;
+};
 
 export type StudyContextType = {
 	subjectName: string;
@@ -32,6 +36,7 @@ export type StudyContextType = {
 	chats: chatType[];
 	addChat: (message: string) => void;
 	totalTimeSpent: number;
+	questions: questionType[];
 };
 
 export const StudyContext = createContext<StudyContextType>({
@@ -42,6 +47,7 @@ export const StudyContext = createContext<StudyContextType>({
 	chats: [],
 	addChat: () => {},
 	totalTimeSpent: 0,
+	questions: [],
 });
 
 const StudyContextProvider = ({ children }: Props) => {
@@ -58,6 +64,7 @@ const StudyContextProvider = ({ children }: Props) => {
 		);
 		return storedStartTime || Date.now();
 	});
+	const [questions, setQuestions] = useState<questionType[]>([]);
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			const currentTime = Date.now();
@@ -92,12 +99,25 @@ const StudyContextProvider = ({ children }: Props) => {
 			)
 			.then((res) => {
 				setChats(res.data);
-				console.log(res.data);
 			})
 			.catch((err) => {
 				enqueueSnackbar(formatHttpApiError(err), {
 					variant: "error",
 				});
+			});
+	}, [subjectId]);
+
+	useEffect(() => {
+		axios
+			.get(
+				import.meta.env.VITE_BACKEND_URL + "/study/getFAQ/" + subjectId,
+				getCommonOptions()
+			)
+			.then((res) => {
+				setQuestions(res.data.questions);
+			})
+			.catch((err) => {
+				setQuestions([]);
 			});
 	}, [subjectId]);
 
@@ -170,6 +190,7 @@ const StudyContextProvider = ({ children }: Props) => {
 				chats,
 				addChat,
 				totalTimeSpent,
+				questions,
 			}}
 		>
 			{children}

@@ -26,9 +26,9 @@ const PDFList = (props: Props) => {
 				}}
 			>
 				<Typography variant="h5">PDFs Uploaded</Typography>
-				{pdfList.map((pdf) => (
+				{pdfList.map((pdf,index) => (
 					<Typography key={pdf.id} variant="body1"  sx={{ mt: 1 }}>
-						{pdf.title}
+						{index+1}) {pdf.title}
 					</Typography>
 				))}
 			</Box>
