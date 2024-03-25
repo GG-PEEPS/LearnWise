@@ -1,15 +1,12 @@
 import { Box, Grid, Typography } from "@mui/material";
-import React, { useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useContext } from "react";
 import TimeSpent from "../../../components/Subject/TimeSpent/TimeSpent";
 import FrequentlyAsked from "../../../components/Subject/FrequentlyAsked/FrequentlyAsked";
 import PDFList from "../../../components/Subject/PDFList/PDFList";
 import { StudyContext } from "../../../context/StudyContextProvider";
 
-type Props = {};
 
-const Subject = (props: Props) => {
-	const { subjectId } = useParams();
+const Subject = () => {
 	const { subjectName } = useContext(StudyContext);
 
 	return (

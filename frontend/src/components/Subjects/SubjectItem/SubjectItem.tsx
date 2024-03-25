@@ -1,4 +1,3 @@
-import React from "react";
 import { Subject } from "../../../context/SubjectsContextProvider";
 import { Box, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";

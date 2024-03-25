@@ -8,7 +8,6 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import CreateIcon from "@mui/icons-material/Create";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import { NavLink } from "react-router-dom";
 
@@ -65,7 +64,7 @@ const SidebarGlobalStyles = () => {
 };
 const SidebarGlobalStylesMemo = React.memo(SidebarGlobalStyles);
 
-export function SideMenu(props) {
+export function SideMenu(props:{mobileOpen:boolean, setMobileOpen:React.Dispatch<React.SetStateAction<boolean>>}) {
 	const { mobileOpen, setMobileOpen } = props;
 
 	const handleDrawerToggle = () => {

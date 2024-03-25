@@ -16,7 +16,7 @@ export type AuthContextType = {
     isAuthenticated: boolean | null,
     setIsAuthenticated: (value: boolean) => void,
     user: null | GlobalUserType,
-    setUser: (value: GlobalUserType) => void
+    setUser: (value: GlobalUserType | null) => void
 }
 
 export const AuthContext = createContext<AuthContextType>({

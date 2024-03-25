@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { questionType } from "../../../context/StudyContextProvider";
 import { Box, Button, Paper, Collapse, Typography } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
@@ -43,7 +43,7 @@ const SubjectFAQItem = ({ question, index }: Props) => {
 				</Button>
 			</Box>
 			<Collapse in={open} timeout="auto" unmountOnExit>
-				<Typography variant="body1">{question.answer}</Typography>
+				<Typography variant="body1">Answer- {question.answer}</Typography>
 			</Collapse>
 		</Box>
 	);

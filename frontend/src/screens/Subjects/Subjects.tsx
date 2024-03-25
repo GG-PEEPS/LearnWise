@@ -5,9 +5,7 @@ import CreateSubjectDialog from "../../components/Subjects/CreateSubjectDialog/C
 import { SubjectContext } from "../../context/SubjectsContextProvider";
 import SubjectDisplay from "../../components/Subjects/SubjectDisplay/SubjectDisplay";
 
-type Props = {};
-
-const Subjects = (props: Props) => {
+const Subjects = () => {
 	const [open, setOpen] = React.useState(false);
 
 	const { subjects } = useContext(SubjectContext);

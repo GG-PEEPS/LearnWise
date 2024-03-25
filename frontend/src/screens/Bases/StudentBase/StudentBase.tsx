@@ -6,7 +6,6 @@ import AppHeader from "./AppHeader";
 import { Box } from "@mui/system";
 import { Outlet, useLocation } from "react-router-dom";
 
-import LoadingOverlayResource from "../LoadingOverlayResource";
 
 function StudentBase() {
 	const [mobileOpen, setMobileOpen] = React.useState(false);

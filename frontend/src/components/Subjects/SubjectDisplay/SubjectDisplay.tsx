@@ -1,4 +1,3 @@
-import React from "react";
 import { Subject } from "../../../context/SubjectsContextProvider";
 import { Box, Grid, Typography } from "@mui/material";
 import SubjectItem from "../SubjectItem/SubjectItem";

@@ -1,19 +1,32 @@
-import { Box, Grid, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import { useContext } from "react";
 import { StudyContext } from "../../context/StudyContextProvider";
 import SubjectFAQItem from "../../components/Subject/SubjectFAQ/SubjectFAQItem";
 
-type Props = {};
-
-const SubjectFAQ = (props: Props) => {
-	const { questions, subjectName } = useContext(StudyContext);
+const SubjectFAQ = () => {
+	const { questions, subjectName, questionsLoader } = useContext(StudyContext);
 	return (
 		<Box>
-			<Typography variant="h5">Top Questions - {subjectName}</Typography>
+			<Typography variant="h4">Top Questions - {subjectName}</Typography>
+			{questionsLoader && (
+				<Box
+					sx={{
+						mt: 1,
+						textAlign: "center",
+					}}
+				>
+					<CircularProgress
+						sx={{
+							width: "100%",
+							mt: 1,
+						}}
+					/>
+				</Box>
+			)}
 			<Grid container>
 				{questions.map((question, index) => (
 					<Grid item xs={12} key={index}>
-						<SubjectFAQItem question={question} index={index}/>
+						<SubjectFAQItem question={question} index={index} />
 					</Grid>
 				))}
 			</Grid>

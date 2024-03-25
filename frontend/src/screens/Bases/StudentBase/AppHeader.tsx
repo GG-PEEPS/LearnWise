@@ -17,7 +17,6 @@ import {
 import useRequestAuth from "../../../hooks/useRequestAuth";
 import { AuthContext } from "../../../context/AuthContextProvider";
   
-  const drawerWidth = 240;
   
   const modalStyle = {
     position: "absolute",
@@ -30,7 +29,8 @@ import { AuthContext } from "../../../context/AuthContextProvider";
     p: 4,
   };
   
-  export function AppHeader({ mobileOpen, setMobileOpen }) {
+  export function AppHeader({ mobileOpen, setMobileOpen }:
+    { mobileOpen: boolean; setMobileOpen: (value: boolean) => void; }){
     
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -53,7 +53,7 @@ import { AuthContext } from "../../../context/AuthContextProvider";
     const handleClose = () => {
       setAnchorEl(null);
     };
-  
+    //@ts-expect-error  dont know the type
     const handleMenu = (event) => {
       setAnchorEl(event.currentTarget);
     };

@@ -1,15 +1,13 @@
-import React, { useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import  { useContext, useState } from "react";
 import { StudyContext } from "../../context/StudyContextProvider";
-import { Box, Button, Paper, Toolbar, Typography } from "@mui/material";
+import { Box, Button, Paper, Toolbar } from "@mui/material";
 import PdfItem from "../../components/SubjectChat/PdfItem/PdfItem";
 import PdfUploadDialog from "../../components/SubjectChat/PdfUploadDialog/PdfUploadDialog";
 import Chat from "../../components/SubjectChat/Chat/Chat";
 
-type Props = {};
 
-const SubjectChat = (props: Props) => {
-	const { subjectName, pdfList } = useContext(StudyContext);
+const SubjectChat = () => {
+	const { pdfList } = useContext(StudyContext);
 	const [open, setOpen] = useState(false);
 
 	const handleUploadClick = () => {

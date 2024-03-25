@@ -12,7 +12,8 @@ export default function useRequestAuth() {
     const {setIsAuthenticated,setUser}=useContext(AuthContext)
     const { enqueueSnackbar } = useSnackbar()
 
-    const handleError = useCallback((err) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleError = useCallback((err: any) => {
         const formattedError = formatHttpApiError(err);
         enqueueSnackbar(formattedError,{variant:"error"})
         setLoading(false);

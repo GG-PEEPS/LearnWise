@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import getCommonOptions from "../helpers/getCommonOptions";
 import { enqueueSnackbar } from "notistack";
@@ -37,6 +37,7 @@ export type StudyContextType = {
 	addChat: (message: string) => void;
 	totalTimeSpent: number;
 	questions: questionType[];
+	questionsLoader: boolean;
 };
 
 export const StudyContext = createContext<StudyContextType>({
@@ -48,6 +49,7 @@ export const StudyContext = createContext<StudyContextType>({
 	addChat: () => {},
 	totalTimeSpent: 0,
 	questions: [],
+	questionsLoader: false,
 });
 
 const StudyContextProvider = ({ children }: Props) => {
@@ -58,18 +60,19 @@ const StudyContextProvider = ({ children }: Props) => {
 	const [pdfList, setPdfList] = React.useState<pdfType[]>([]);
 	const [chats, setChats] = React.useState<chatType[]>([]);
 	const [totalTimeSpent, setTotalTimeSpent] = useState(0);
-	const [startTime, setStartTime] = useState(() => {
+	const startTime = useMemo(() => {
 		const storedStartTime = parseInt(
-			localStorage.getItem(`startTime_${subjectId}`)
+			localStorage.getItem(`startTime_${subjectId}`) as string
 		);
 		return storedStartTime || Date.now();
-	});
+	}, [subjectId]);
 	const [questions, setQuestions] = useState<questionType[]>([]);
+	const [questionsLoader, setQuestionsLoader] = useState<boolean>(true);
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			const currentTime = Date.now();
 			const elapsedTime = Math.floor((currentTime - startTime) / 1000);
-			setTotalTimeSpent((prevTime) => elapsedTime);
+			setTotalTimeSpent(() => elapsedTime);
 			localStorage.setItem(`startTime_${subjectId}`, startTime.toString());
 		}, 1000);
 
@@ -83,7 +86,8 @@ const StudyContextProvider = ({ children }: Props) => {
 				getCommonOptions()
 			)
 			.then((res) => {
-				setPdfList(res.data);
+				setPdfList(res.data.documents);
+				setSubjectName(res.data.subject_name);
 			})
 			.catch((err) => {
 				enqueueSnackbar(formatHttpApiError(err), {
@@ -115,8 +119,10 @@ const StudyContextProvider = ({ children }: Props) => {
 			)
 			.then((res) => {
 				setQuestions(res.data.questions);
+				setQuestionsLoader(false);
 			})
-			.catch((err) => {
+			.catch((err): void => {
+				console.log(err);
 				setQuestions([]);
 			});
 	}, [subjectId]);
@@ -191,6 +197,7 @@ const StudyContextProvider = ({ children }: Props) => {
 				addChat,
 				totalTimeSpent,
 				questions,
+				questionsLoader,
 			}}
 		>
 			{children}

@@ -1,13 +1,18 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import {
+	Box,
+	Button,
+	CircularProgress,
+	LinearProgress,
+	Paper,
+	Typography,
+} from "@mui/material";
+import { useContext } from "react";
 import { StudyContext } from "../../../context/StudyContextProvider";
 import { useNavigate, useParams } from "react-router-dom";
 
-type Props = {};
-
-const FrequentlyAsked = (props: Props) => {
+const FrequentlyAsked = () => {
 	const { subjectId } = useParams();
-	const { questions } = useContext(StudyContext);
+	const { questions, questionsLoader } = useContext(StudyContext);
 	const navigate = useNavigate();
 	return (
 		<Box
@@ -26,6 +31,21 @@ const FrequentlyAsked = (props: Props) => {
 				}}
 			>
 				<Typography variant="h5">Questions generated from Notes</Typography>
+				{questionsLoader && (
+					<Box
+						sx={{
+							mt: 1,
+							textAlign: "center",
+						}}
+					>
+						<CircularProgress
+							sx={{
+								width: "100%",
+								mt: 1,
+							}}
+						/>
+					</Box>
+				)}
 				{questions.slice(0, 5).map((question, index) => (
 					<Typography key={index} variant="body1" sx={{ mt: 1 }}>
 						{index + 1}) {question.question}

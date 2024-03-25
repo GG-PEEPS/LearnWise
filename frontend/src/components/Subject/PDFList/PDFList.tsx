@@ -1,11 +1,10 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import  { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { StudyContext } from "../../../context/StudyContextProvider";
 
-type Props = {};
 
-const PDFList = (props: Props) => {
+const PDFList = () => {
 	const navigate = useNavigate();
 	const { subjectId } = useParams();
 	const { pdfList } = useContext(StudyContext);
