@@ -6,6 +6,7 @@ from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
 from .chatviews import *
 from .ragmodel import getFAQ
+from django.conf import settings
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -70,6 +71,9 @@ def delete_document(request, document_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'DELETE':
+        file_path = os.path.join(settings.MEDIA_ROOT, str(document.pdf_file))
+        if os.path.exists(file_path):
+            os.remove(file_path)
         document.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
