@@ -34,3 +34,20 @@ class Chat(models.Model):
 
     def __str__(self):
         return f"{self.from_type} - {self.subject.name} - {self.created_at}"
+    
+
+class PYQSubject(models.Model):
+    name=models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+    
+class PYQquestions(models.Model):
+    subject = models.ForeignKey(PYQSubject, on_delete=models.CASCADE)
+    question = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    year=models.IntegerField()
+    marks=models.IntegerField()
+
+    def __str__(self):
+        return self.question
