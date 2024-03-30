@@ -27,13 +27,15 @@ const PdfItem = ({ pdf }: Props) => {
                 sx={{
                     flex: 1,
                     textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
                 }}
             >
                 {truncateName(pdf.title, 20)} 
             </Box>
             <Box
                 sx={{
-                    width: "1rem",
+                    minWidth: "auto", 
                     cursor: "pointer",
                 }}
                 onClick={() => {
