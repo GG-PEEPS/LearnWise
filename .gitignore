@@ -25,4 +25,4 @@ dist-ssr
 
 virt
 .env
-.sqlite3
+*.sqlite3
