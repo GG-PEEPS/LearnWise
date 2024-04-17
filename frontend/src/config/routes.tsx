@@ -13,6 +13,7 @@ import SubjectChat from "../screens/SubjectChat/SubjectChat";
 import StudyContextProvider from "../context/StudyContextProvider";
 import SubjectFAQ from "../screens/SubjectFAQ/SubjectFAQ";
 import Calendar from "../screens/Calendar/Calendar";
+import Dashboard from "../screens/Dashboard/Dashboard";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -25,8 +26,14 @@ export default createBrowserRouter([
 				element: <StudentBase />,
 				children: [
 					{
-						path: "/",
-						element: <div>Dashboard</div>,
+						path: "/dashboard",
+						element: (
+							<AssignmentContextProvider>
+								<SubjectContextProvider>
+									<Dashboard />
+								</SubjectContextProvider>
+							</AssignmentContextProvider>
+						),
 					},
 					{
 						path: "/calendar",
