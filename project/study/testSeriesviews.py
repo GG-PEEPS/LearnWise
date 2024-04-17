@@ -19,14 +19,15 @@ def pyq_by_year_subject_view(request, subject_id):
         grouped_questions = PYQquestions.objects.filter(subject_id=subject_id).values('year').annotate(total_questions=Count('id')).order_by('year')
 
         # Prepare response data
-        data = {}
+        data = []
         for entry in grouped_questions:
             year = entry['year']
             total_questions = entry['total_questions']
             questions = PYQquestions.objects.filter(subject_id=subject_id, year=year).values('question', 'marks')
-            data[year] = {
+            data.append({
+                'year': year,
                 'total_questions': total_questions,
                 'questions': list(questions)
-            }
+            })
 
         return Response(data)
