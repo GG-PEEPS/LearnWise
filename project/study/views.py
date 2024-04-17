@@ -2,10 +2,13 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from sentence_transformers import SentenceTransformer, util
+
 from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
 from .chatviews import *
 from .testSeriesviews import *
+from .scorestudent import create_comparison_model, compare_answers
 from .ragmodel import getFAQ
 from django.conf import settings
 
@@ -101,3 +104,17 @@ def get_faq(request,subject_id):
     x=getFAQ(gemini_model,vector_index)
 
     return Response(json.loads(x['result']),status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def scoreStudent(request):
+    q = request.data['questions']
+    a = request.data['answers']
+    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    sbert_model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+
+    ai_answer = create_comparison_model(gemini_model,q)
+    score = compare_answers(sbert_model,a,ai_answer)
+
+    return Response(json.loads(score),status=status.HTTP_200_OK)
+
