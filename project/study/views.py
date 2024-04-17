@@ -94,6 +94,7 @@ def get_all_documents(request, subject_id):
 def get_faq(request,subject_id):
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    print(subject_id)
     pdf_directory = os.getcwd()+"/study/mediafiles/notes/"+str(subject_id)
     vector_index = pdf2vec(pdf_directory,embeddings_model)
 

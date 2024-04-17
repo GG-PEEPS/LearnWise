@@ -1,5 +1,6 @@
 from django.urls import include, path 
 from . import views
+from .seed import add_questions
 
 urlpatterns = [
     path('getSubjects',views.get_subjects),
@@ -12,4 +13,6 @@ urlpatterns = [
     path('createChat/<int:subject_id>',views.create_chat),
     path('getFAQ/<int:subject_id>',views.get_faq),
     path('getTestSubjects',views.get_test_subjects),
+    path('addQuestions',add_questions),
+    path('getPYQ/<int:subject_id>',views.pyq_by_year_subject_view),
 ]
