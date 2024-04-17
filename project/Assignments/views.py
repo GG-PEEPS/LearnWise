@@ -162,3 +162,14 @@ def edit_assignment(request):
             'completed_assignments': completed_serializer.data
         })
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def get_assignment_with_deadlines(request):
+    user = request.user
+
+    assignments=Assignments.objects.filter(user=user)
+    serializer = AssignmentsSerializer(assignments, many=True)
+    return Response(serializer.data)
