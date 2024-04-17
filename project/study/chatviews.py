@@ -2,16 +2,24 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+import uuid 
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from io import BytesIO
 from .models import Chat, Document
 from .serializers import ChatSerializer, DocumentSerializer
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import os
 from .ragmodel import pdf2vec, create_qa_chain_model
+from .imagemodel import extract_images_from_pdf
 import json
 from dotenv import load_dotenv
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
+
+def image_upload_path(instance, filename):
+    return f'images/{instance.subject.id}/{filename}'
 
 @api_view(['GET'])
 def get_subject_chats(request, subject_id):
@@ -34,11 +42,18 @@ def create_chat(request,subject_id):
 
         chats=Chat.objects.filter(subject_id=subject_id).order_by('created_at')
         chats=ChatSerializer(chats,many=True)
-        # TODO: Rahul ye chats lekr model ko feed karne hai, print karkr format dekh lena. Baakki sab i guess unchanged hi rahega
         x = create_qa_chain_model(gemini_model,vector_index,message)
         answer=x['result']
 
-        chat=Chat(subject_id=subject_id,from_type='SYSTEM',message=answer)
+        images = extract_images_from_pdf(pdf_directory,message)
+        for img in images:
+            unique_filename = str(uuid.uuid4()) + '.jpg'
+            images_io = BytesIO()
+            img.save(images_io, format='JPEG')
+            img.seek(0)
+            uploaded_image = InMemoryUploadedFile(images_io, None, unique_filename, 'image/jpeg', images_io.getbuffer().nbytes, None)
+
+        chat = Chat(subject_id=subject_id, from_type='SYSTEM', message=answer, images=uploaded_image)
         chat_serializer=ChatSerializer(chat)
         chat.save()
         chats=Chat.objects.filter(subject_id=subject_id).order_by('created_at')
