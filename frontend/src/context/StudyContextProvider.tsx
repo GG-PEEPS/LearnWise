@@ -123,7 +123,6 @@ const StudyContextProvider = ({ children }: Props) => {
 				setQuestionsLoader(false);
 			})
 			.catch((err): void => {
-				console.log(err);
 				setQuestions([]);
 			});
 	}, [subjectId]);

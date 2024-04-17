@@ -7,7 +7,6 @@ type Props = {
 
 const ChatMessage = ({ chat }: Props) => {
 	const isUser = chat.from_type === "USER";
-	console.log(import.meta.env.VITE_BACKEND_URL + chat?.images);
 	return (
 		<Box
 			key={chat.id}

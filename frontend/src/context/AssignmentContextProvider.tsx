@@ -133,7 +133,6 @@ export default function AssignmentContextProvider({
 			.then((res) => {
 				const data = res.data;
 				result = data;
-				console.log(data);
 			})
 			.catch((err) => {
 				enqueueSnackbar(formatHttpApiError(err), { variant: "error" });

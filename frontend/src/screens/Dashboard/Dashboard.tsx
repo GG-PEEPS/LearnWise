@@ -11,7 +11,6 @@ const Dashboard = () => {
   const { user } = React.useContext(AuthContext);
   const { subjects } = useContext(SubjectContext);
   const numberOfSubjectsEnrolled = subjects.length;
-    console.log(overdue_assignments)
   return (
     <div style={{ padding: '20px' }}>
       <Typography variant="h4" gutterBottom>

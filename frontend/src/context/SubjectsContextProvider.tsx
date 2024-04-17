@@ -42,7 +42,7 @@ const SubjectContextProvider = (props: Props) => {
 
 	const addSubject = async (subject: Omit<Subject, "id">) => {
 		try {
-			await axios.post(
+			const result=await axios.post(
 				import.meta.env.VITE_BACKEND_URL + "/study/addSubject",
 				{
 					name: subject.name,
@@ -50,6 +50,7 @@ const SubjectContextProvider = (props: Props) => {
 				getCommonOptions()
 			);
 			enqueueSnackbar("Subject added successfully", { variant: "success" });
+			setSubjects([...subjects, result.data]);
 		} catch (err) {
 			enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
 		}

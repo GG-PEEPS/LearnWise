@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
 from .chatviews import *
+from .testSeriesviews import *
 from .ragmodel import getFAQ
 from django.conf import settings
 

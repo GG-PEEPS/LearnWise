@@ -7,7 +7,6 @@ import ChatMessage from "./ChatMessage/ChatMessage";
 const Chat = () => {
 	const messagesEndRef = useRef<null | HTMLDivElement>(null);
 	const { subjectName, chats, addChat } = useContext(StudyContext);
-	console.log(chats);
 	const [message, setMessage] = useState("" as string);
 
 	const handleSubmit = () => {

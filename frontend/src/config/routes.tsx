@@ -14,6 +14,9 @@ import StudyContextProvider from "../context/StudyContextProvider";
 import SubjectFAQ from "../screens/SubjectFAQ/SubjectFAQ";
 import Calendar from "../screens/Calendar/Calendar";
 import Dashboard from "../screens/Dashboard/Dashboard";
+import TestSeries from "../screens/TestSeries/TestSeries";
+import TestSeriesContextProvider from "../context/TestSeriesContextProvider";
+import TestSeriesSubject from "../screens/TestSeries/TestSeriesSubject/TestSeriesSubject";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -74,6 +77,21 @@ export default createBrowserRouter([
 							{
 								path: "/subjects/:subjectId",
 								element: <Subject />,
+							},
+						],
+					},
+					{
+						path: "/test-series",
+						element: (
+							<TestSeriesContextProvider>
+								<Outlet />
+							</TestSeriesContextProvider>
+						),
+						children: [
+							{ path: "/test-series", element: <TestSeries /> },
+							{
+								path: "/test-series/:subjectId",
+								element: <TestSeriesSubject />,
 							},
 						],
 					},

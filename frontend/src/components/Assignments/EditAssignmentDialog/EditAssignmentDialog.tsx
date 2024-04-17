@@ -29,7 +29,6 @@ const EditAssignmentDialog = ({
 	platform: initialPlatform,
 	deadline: initialDeadline,
 }: Props) => {
-	console.log(initialDeadline, new Date(initialDeadline));
 	const [title, setTitle] = useState<string>(initialTitle);
 	const [platform, setPlatform] = useState<string>(initialPlatform);
 	const [deadline, setDeadline] = useState<string>(

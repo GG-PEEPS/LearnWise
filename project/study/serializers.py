@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from io import BytesIO
-from .models import Subject, Document, Chat
+from .models import Subject, Document, Chat, PYQSubject
 import os
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -38,3 +38,9 @@ class ChatSerializer(serializers.ModelSerializer):
             validated_data['images'] = image_file
         
         return super().create(validated_data)
+    
+class PYQSubjectSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model=PYQSubject
+        fields=['id','name']
+    

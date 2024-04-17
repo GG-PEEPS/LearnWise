@@ -10,7 +10,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import { NavLink } from "react-router-dom";
-
+import QuizIcon from "@mui/icons-material/Quiz";
 import { Box } from "@mui/system";
 import { GlobalStyles, useTheme } from "@mui/material";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -35,6 +35,12 @@ const listItems = [
 		to: "/subjects",
 		name: "Subjects",
 		icon: <CollectionsBookmarkIcon />,
+	},
+	{
+		key: "Test Series",
+		to: "/test-series",
+		name: "Test Series",
+		icon: <QuizIcon />,
 	},
 ];
 
@@ -64,7 +70,10 @@ const SidebarGlobalStyles = () => {
 };
 const SidebarGlobalStylesMemo = React.memo(SidebarGlobalStyles);
 
-export function SideMenu(props:{mobileOpen:boolean, setMobileOpen:React.Dispatch<React.SetStateAction<boolean>>}) {
+export function SideMenu(props: {
+	mobileOpen: boolean;
+	setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
 	const { mobileOpen, setMobileOpen } = props;
 
 	const handleDrawerToggle = () => {

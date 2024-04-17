@@ -11,4 +11,5 @@ urlpatterns = [
     path('getSubjectChats/<int:subject_id>',views.get_subject_chats),
     path('createChat/<int:subject_id>',views.create_chat),
     path('getFAQ/<int:subject_id>',views.get_faq),
+    path('getTestSubjects',views.get_test_subjects),
 ]
