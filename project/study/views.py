@@ -2,7 +2,8 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
+from django.db import models
 
 from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
@@ -108,13 +109,21 @@ def get_faq(request,subject_id):
 
 @api_view(['POST'])
 def scoreStudent(request):
-    q = request.data['questions']
-    a = request.data['answers']
+    q = request.data['question']
+    a = request.data['answer']
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
     sbert_model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
 
     ai_answer = create_comparison_model(gemini_model,q)
-    score = compare_answers(sbert_model,a,ai_answer)
+    semantic_score = compare_answers(sbert_model,a,ai_answer)
+    score = {"score" : semantic_score}
+    return Response(score,status=status.HTTP_200_OK)
 
-    return Response(json.loads(score),status=status.HTTP_200_OK)
+@api_view(['POST'])
+def getAnswer(request):
+    q = request.data['question']
+    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
 
+    ai_answer = create_comparison_model(gemini_model,q)
+    ans = {"question": q, "answer":ai_answer}
+    return Response(ans,status=status.HTTP_200_OK)

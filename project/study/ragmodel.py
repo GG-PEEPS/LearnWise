@@ -71,14 +71,13 @@ def getFAQ(gemini_pro_model, vector_index):
     {context}
     Helpful Answer: i want the response in one single string {{"questions":[<Questions with answers>]}}
     """
-    print(template)
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 
     # Create a RetrievalQA instance with questions
     qa_chain = RetrievalQA.from_chain_type(
         gemini_pro_model,
         retriever=vector_index,
-        return_source_documents=True,
+        # return_source_documents=True,
         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
     )
     question="What is the most probable questions from the context?"

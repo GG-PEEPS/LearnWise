@@ -10,6 +10,7 @@ from langchain import PromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
+from sentence_transformers import util
 import google.generativeai as genai
 from PIL import Image
 
@@ -112,20 +113,17 @@ def score_student(sbert_model, gemini_model, vector_index, images):
     return op
 
 def create_comparison_model(gemini_pro_model, question):
-    template = """
+    prompt = f"""
     Answer the question asked by the user in detail. 
     Question: {question}
     Helpful Answer: Provide the response in one single string.
     """
+    # image = Image.open(image_path)
 
-    QA_CHAIN_PROMPT = PromptTemplate.from_template(input_variables=['question'],template = template)
-    qa_chain = RetrievalQA.from_chain_type(
-        gemini_pro_model,
-        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
-    )
-    result = qa_chain({"query": question})
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content([prompt])
+    return response.text
 
-    return result.get("result", "")
 
 def compare_answers(model, student_answer, rag_answer):
     embeddings = model.encode([rag_answer, student_answer])
