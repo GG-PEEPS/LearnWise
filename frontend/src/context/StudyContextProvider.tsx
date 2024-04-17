@@ -22,6 +22,7 @@ export type chatType = {
 	created_at: string;
 	from_type: string;
 	message: string;
+	images?: string;
 };
 export type questionType = {
 	question: string;

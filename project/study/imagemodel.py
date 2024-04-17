@@ -49,6 +49,7 @@ def extract_images_from_pdf(pdf_directory, question):
                     if response.strip() == 'y':
 
                         relevant_images.append(pillow_image)
+                        return relevant_images
                     if len(relevant_images) > 3:
                         break
                 except Exception as e:

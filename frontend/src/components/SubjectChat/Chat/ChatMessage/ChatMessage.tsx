@@ -7,7 +7,7 @@ type Props = {
 
 const ChatMessage = ({ chat }: Props) => {
 	const isUser = chat.from_type === "USER";
-
+	console.log(import.meta.env.VITE_BACKEND_URL + chat?.images);
 	return (
 		<Box
 			key={chat.id}
@@ -27,6 +27,13 @@ const ChatMessage = ({ chat }: Props) => {
 					textAlign: isUser ? "right" : "left",
 				}}
 			>
+				{chat?.images && (
+					<img
+						src={import.meta.env.VITE_BACKEND_URL + chat.images}
+						style={{ width: "100%	" }}
+					/>
+				)}
+
 				<Typography variant="body1">{chat.message}</Typography>
 			</Box>
 		</Box>

@@ -46,6 +46,8 @@ def create_chat(request,subject_id):
         answer=x['result']
 
         images = extract_images_from_pdf(pdf_directory,message)
+        if not images:
+            uploaded_image=None
         for img in images:
             unique_filename = str(uuid.uuid4()) + '.jpg'
             images_io = BytesIO()
