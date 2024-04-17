@@ -17,6 +17,7 @@ import Dashboard from "../screens/Dashboard/Dashboard";
 import TestSeries from "../screens/TestSeries/TestSeries";
 import TestSeriesContextProvider from "../context/TestSeriesContextProvider";
 import TestSeriesSubject from "../screens/TestSeries/TestSeriesSubject/TestSeriesSubject";
+import TestSeriesPYQ from "../screens/TestSeries/TestSeriesPYQ/TestSeriesPYQ";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -93,6 +94,10 @@ export default createBrowserRouter([
 								path: "/test-series/:subjectId",
 								element: <TestSeriesSubject />,
 							},
+							{
+								path:"/test-series/:subjectId/previous-year-questions",
+								element:<TestSeriesPYQ/>
+							}
 						],
 					},
 				],
