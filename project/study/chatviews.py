@@ -61,3 +61,40 @@ def create_chat(request,subject_id):
         chats=Chat.objects.filter(subject_id=subject_id).order_by('created_at')
         chat_serializer=ChatSerializer(chats,many=True)
         return Response(chat_serializer.data,status=status.HTTP_201_CREATED)
+    
+
+
+
+    
+    # functions= [
+    # {
+    #     "name": "store_answer",
+    #     "parameters": {
+    #         "type": "object",
+    #         "properties": {
+    #             "Questions": {
+    #                 "type": "array",
+    #                 "items": {
+    #                     "type": "object",
+    #                     "properties": {
+    #                         "django": {
+    #                             "type": "string",
+    #                             "description": "yes/no answer for skill in Django"
+    #                         },
+    #                         "python": {
+    #                             "type": "string",
+    #                             "description": "yes/no answer for skill in Python"
+    #                         },
+    #                         "work_experience": {
+    #                             "type": "string",
+    #                             "description": "Number of months of previous work experience"
+    #                         }
+    #                     }
+    #                 },
+    #                 "description": "list of skills"
+    #             }
+    #         }
+    #     },
+    #     "description": "Store overall list of skills"
+    # }
+    #     ]

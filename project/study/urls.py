@@ -15,4 +15,5 @@ urlpatterns = [
     path('getTestSubjects',views.get_test_subjects),
     path('addQuestions',add_questions),
     path('getPYQ/<int:subject_id>',views.pyq_by_year_subject_view),
+    path('getScore',views.scoreStudent)
 ]

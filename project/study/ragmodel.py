@@ -82,7 +82,6 @@ def getFAQ(gemini_pro_model, vector_index):
         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
     )
     question="What is the most probable questions from the context?"
-    # Generate response using the model
     result = qa_chain({"query": question})
 
     return result
@@ -91,6 +90,7 @@ def getFAQ(gemini_pro_model, vector_index):
 
 if __name__ == "__main__":
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
+
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
 
     pdf_directory = os.getcwd()+"/data"
