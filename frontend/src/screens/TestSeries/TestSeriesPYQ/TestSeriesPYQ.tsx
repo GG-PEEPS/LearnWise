@@ -1,46 +1,94 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TestseriesContext } from "../../../context/TestSeriesContextProvider";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import {
+	Box,
+	FormControl,
+	Grid,
+	InputLabel,
+	MenuItem,
+	Paper,
+	Select,
+	Typography,
+} from "@mui/material";
+import {  useParams } from "react-router-dom";
 
 type Props = {};
 
 const TestSeriesPYQ = (props: Props) => {
 	const { pyqs, subjectName } = useContext(TestseriesContext);
+	const { year } = useParams();
+	const [selectedYear, setSelectedYear] = React.useState(0);
+	const [selectedIndex, setSelectedIndex] = useState(0);
+
+	useEffect(()=>{
+		if(pyqs.length>0)
+		setSelectedYear(pyqs[0].year);
+	},[year,pyqs])
+
+	useEffect(() => {
+		setSelectedIndex(pyqs.findIndex((pyq) => pyq?.year === selectedYear));
+	}, [selectedYear, pyqs]);
+
+
 
 	return (
-		<Box>
-			<Typography variant="h4">{subjectName} Past Year Questions</Typography>
-			{pyqs.map((item, index) => (
-				<Box
-					sx={{
-						my: 2,
-					}}
-          key={index}
-				>
-					<Typography variant="h5">{item.year}</Typography>
-					<Grid container>
-						{item.questions.map((question, index) => (
-							<Grid
-								item
-								xs={12}
-								key={index}
-								component={Paper}
-								sx={{
-									my: 2,
-								}}
-							>
-								<Box sx={{ p: 2, my: 2 }}>
-									<Typography variant="h6">{question.question}</Typography>
-									<Typography variant="body1">
-										Marks: {question.marks}
-									</Typography>
-								</Box>
-							</Grid>
-						))}
-					</Grid>
+		<>
+			{year && pyqs.length > 0 && (
+				<Box>
+					<Typography variant="h4">
+						{subjectName} Past Year Questions
+					</Typography>
+					<FormControl
+						fullWidth
+						sx={{
+							my: 2,
+						}}
+					>
+						<InputLabel id="demo-simple-select-label">Year</InputLabel>
+						<Select
+							labelId="demo-simple-select-label"
+							id="demo-simple-select"
+							label="Year"
+							value={selectedYear as number}
+							onChange={(e) => setSelectedYear(e.target.value as number)}
+						>
+							{pyqs.map((pyq) => (
+								<MenuItem key={pyq.year} value={pyq.year}>
+									{pyq.year}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					<Box
+						sx={{
+							my: 2,
+						}}
+					>
+						<Typography variant="h5">{pyqs[selectedIndex]?.year}</Typography>
+						<Grid container>
+							{pyqs[selectedIndex]?.questions.map((question, index) => (
+								<Grid
+									item
+									xs={12}
+									key={index}
+									component={Paper}
+									sx={{
+										my: 2,
+									}}
+								>
+									<Box sx={{ p: 2, my: 2 }}>
+										<Typography variant="h6">{question.question}</Typography>
+										<Typography variant="body1">
+											Marks: {question.marks}
+										</Typography>
+									</Box>
+								</Grid>
+							))}
+						</Grid>
+					</Box>
 				</Box>
-			))}
-		</Box>
+			)}
+		</>
 	);
 };
 

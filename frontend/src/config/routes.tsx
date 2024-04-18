@@ -95,7 +95,7 @@ export default createBrowserRouter([
 								element: <TestSeriesSubject />,
 							},
 							{
-								path:"/test-series/:subjectId/previous-year-questions",
+								path:"/test-series/:subjectId/previous-year-questions/:year",
 								element:<TestSeriesPYQ/>
 							}
 						],
