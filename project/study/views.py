@@ -97,11 +97,18 @@ def get_all_documents(request, subject_id):
             "subject_name": subject.name
         })
 
-
 FAQCache={}
 
 @api_view(['GET'])
+@cache_page(60 * 60)
 def get_faq(request,subject_id):
+
+    cached_answer=cache.get(subject_id)
+
+    if cached_answer:
+        return Response(cached_answer,status=status.HTTP_200_OK)
+
+
     if subject_id in FAQCache:
         return Response(FAQCache[subject_id],status=status.HTTP_200_OK)
 #     if subject_id!=3:
@@ -248,11 +255,12 @@ def get_faq(request,subject_id):
 
     x=getFAQ(gemini_model,vector_index)
     FAQCache[subject_id]=json.loads(x['result'])
+    cache.set(subject_id,json.loads(x['result']),timeout=None)
     return Response(json.loads(x['result']),status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-@cache_page(60 * 15)
+@cache_page(60 * 60)
 def scoreStudent(request):
     q = request.data['question']
     a = request.data['answer']
@@ -272,18 +280,16 @@ def scoreStudent(request):
     semantic_score = compare_answers(sbert_model, a, ai_answer)
     score = {"score": semantic_score}
 
-    # Cache the response
-    cache.set(hash_key, score, timeout=None)  # Cache indefinitely
+    cache.set(hash_key, score, timeout=None) 
 
     return Response(score, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-@cache_page(60 * 15)  # Cache for 15 minutes
+@cache_page(60 * 60)  
 def getAnswer(request):
     q = request.data['question']
     
-    # Check if the answer is already cached
     cached_answer = cache.get(q)
     if cached_answer:
         return Response(cached_answer, status=status.HTTP_200_OK)
@@ -293,7 +299,6 @@ def getAnswer(request):
     ai_answer = create_comparison_model(gemini_model, q)
     ans = {"question": q, "answer": ai_answer}
 
-    # Cache the answer
-    cache.set(q, ans, timeout=None)  # Cache indefinitely
+    cache.set(q, ans, timeout=None)  
 
     return Response(ans, status=status.HTTP_200_OK)
