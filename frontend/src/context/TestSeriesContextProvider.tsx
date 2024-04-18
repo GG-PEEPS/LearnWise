@@ -13,6 +13,8 @@ export type TestSeriesContextType = {
 	subjects: Subject[];
 	subjectName: string;
 	pyqs: PYQsType[];
+	getAnswer: (question: string) => Promise<string>;
+	getScore: (question: string, userAnswer: string) => Promise<number>;
 };
 export type PyqsQuestionType = {
 	id: string;
@@ -30,6 +32,8 @@ export const TestseriesContext = createContext<TestSeriesContextType>({
 	subjects: [],
 	subjectName: "",
 	pyqs: [],
+	getAnswer: async () => "",
+	getScore: async () => 0,
 });
 
 const TestSeriesContextProvider = (props: Props) => {
@@ -63,7 +67,6 @@ const TestSeriesContextProvider = (props: Props) => {
 					import.meta.env.VITE_BACKEND_URL + `/study/getPYQ/${subjectId}`
 				);
 				setPyqs(res.data);
-				console.log(res.data);
 			} catch (err) {
 				enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
 			}
@@ -71,8 +74,41 @@ const TestSeriesContextProvider = (props: Props) => {
 		getData();
 	}, [subjectId, subjects]);
 
+	const getAnswer = async (question: string) => {
+		try {
+			const res = await axios.post(
+				import.meta.env.VITE_BACKEND_URL + `/study/getAnswer`,
+				{ question }
+			);
+			return res.data.answer;
+		} catch (err) {
+			enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
+		}
+	};
+
+	const getScore = async (question: string, userAnswer: string) => {
+		try {
+			const res = await axios.post(
+				import.meta.env.VITE_BACKEND_URL + `/study/getScore`,
+				{ question, answer: userAnswer }
+			);
+			return res.data.score;
+		} catch (err) {
+			enqueueSnackbar(formatHttpApiError(err), { variant: "error" });
+		}
+	};
+
 	return (
-		<TestseriesContext.Provider value={{ subjects, subjectName, pyqs }}>
+		<TestseriesContext.Provider
+			value={{
+				subjects,
+				subjectName,
+				pyqs,
+
+				getAnswer,
+				getScore,
+			}}
+		>
 			{props.children}
 		</TestseriesContext.Provider>
 	);

@@ -10,7 +10,8 @@ import {
 	Select,
 	Typography,
 } from "@mui/material";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import PYQItem from "../../../components/TestSeriesPYQ/PYQItem/PYQItem";
 
 type Props = {};
 
@@ -20,16 +21,13 @@ const TestSeriesPYQ = (props: Props) => {
 	const [selectedYear, setSelectedYear] = React.useState(0);
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
-	useEffect(()=>{
-		if(pyqs.length>0)
-		setSelectedYear(pyqs[0].year);
-	},[year,pyqs])
+	useEffect(() => {
+		if (pyqs.length > 0) setSelectedYear(pyqs[0].year);
+	}, [year, pyqs]);
 
 	useEffect(() => {
 		setSelectedIndex(pyqs.findIndex((pyq) => pyq?.year === selectedYear));
 	}, [selectedYear, pyqs]);
-
-
 
 	return (
 		<>
@@ -67,22 +65,7 @@ const TestSeriesPYQ = (props: Props) => {
 						<Typography variant="h5">{pyqs[selectedIndex]?.year}</Typography>
 						<Grid container>
 							{pyqs[selectedIndex]?.questions.map((question, index) => (
-								<Grid
-									item
-									xs={12}
-									key={index}
-									component={Paper}
-									sx={{
-										my: 2,
-									}}
-								>
-									<Box sx={{ p: 2, my: 2 }}>
-										<Typography variant="h6">{question.question}</Typography>
-										<Typography variant="body1">
-											Marks: {question.marks}
-										</Typography>
-									</Box>
-								</Grid>
+								<PYQItem key={index} question={question} index={index} />
 							))}
 						</Grid>
 					</Box>

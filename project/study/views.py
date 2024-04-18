@@ -4,7 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from sentence_transformers import SentenceTransformer
 from django.db import models
-
+import hashlib
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 from .models import Subject,Document
 from .serializers import SubjectSerializer, DocumentSerializer
 from .chatviews import *
@@ -250,22 +252,48 @@ def get_faq(request,subject_id):
 
 
 @api_view(['POST'])
+@cache_page(60 * 15)
 def scoreStudent(request):
     q = request.data['question']
     a = request.data['answer']
+    
+    # Hash the question-answer pair to use as cache key
+    hash_key = hashlib.sha256((q + a).encode()).hexdigest()
+    
+    # Check if the response is already cached
+    cached_score = cache.get(hash_key)
+    if cached_score:
+        return Response(cached_score, status=status.HTTP_200_OK)
+
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
     sbert_model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
 
-    ai_answer = create_comparison_model(gemini_model,q)
-    semantic_score = compare_answers(sbert_model,a,ai_answer)
-    score = {"score" : semantic_score}
-    return Response(score,status=status.HTTP_200_OK)
+    ai_answer = create_comparison_model(gemini_model, q)
+    semantic_score = compare_answers(sbert_model, a, ai_answer)
+    score = {"score": semantic_score}
+
+    # Cache the response
+    cache.set(hash_key, score, timeout=None)  # Cache indefinitely
+
+    return Response(score, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
+@cache_page(60 * 15)  # Cache for 15 minutes
 def getAnswer(request):
     q = request.data['question']
+    
+    # Check if the answer is already cached
+    cached_answer = cache.get(q)
+    if cached_answer:
+        return Response(cached_answer, status=status.HTTP_200_OK)
+
     gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
 
-    ai_answer = create_comparison_model(gemini_model,q)
-    ans = {"question": q, "answer":ai_answer}
-    return Response(ans,status=status.HTTP_200_OK)
+    ai_answer = create_comparison_model(gemini_model, q)
+    ans = {"question": q, "answer": ai_answer}
+
+    # Cache the answer
+    cache.set(q, ans, timeout=None)  # Cache indefinitely
+
+    return Response(ans, status=status.HTTP_200_OK)
