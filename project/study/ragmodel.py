@@ -67,10 +67,16 @@ def create_qa_chain_model(gemini_pro_model, vector_index, question):
 
 def getFAQ(gemini_pro_model, vector_index):
     template = """
-    Use the following pieces of context to make a question paper containing 20 questions along with the answer in around 500 words. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer around 500 words strictly.
-    {context}
-    Helpful Answer: i want the response in one single string {{"questions":[<Questions with answers>]}}
-    """
+Use the following pieces of context to make a question paper containing 20 questions along with the answer in around 500 words. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer around 500 words strictly.
+
+{question}
+
+{context}
+Answer Format: give in json format
+"questions": [
+  <"question": "...", "answer": "...">
+]
+"""
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 
     # Create a RetrievalQA instance with questions
@@ -78,10 +84,10 @@ def getFAQ(gemini_pro_model, vector_index):
         gemini_pro_model,
         retriever=vector_index,
         # return_source_documents=True,
-        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
+        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
     )
-    question="What is the most probable questions from the context?"
-    result = qa_chain({"query": question})
+    quest="What is the most probable questions from the context?"
+    result = qa_chain({"query": quest})
 
     return result
 

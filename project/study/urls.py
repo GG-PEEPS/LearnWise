@@ -17,6 +17,6 @@ urlpatterns = [
     path('getPYQ/<int:subject_id>',views.pyq_by_year_subject_view),
     path('getScore',views.scoreStudent),
     path('getAnswer',views.getAnswer),
-    path('getTestSeries',views.getTestSeries)
+    # path('getTestSeries',views.getTestSeries)
 
 ]
