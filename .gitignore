@@ -26,5 +26,6 @@ dist-ssr
 virt
 .env
 *.sqlite3
+.pyc
 
 mediafiles

@@ -1,4 +1,10 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+	Box,
+	Button,
+	LinearProgress,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { StudyContext } from "../../../context/StudyContextProvider";
 import SendIcon from "@mui/icons-material/Send";
@@ -8,6 +14,7 @@ const Chat = () => {
 	const messagesEndRef = useRef<null | HTMLDivElement>(null);
 	const { subjectName, chats, addChat } = useContext(StudyContext);
 	const [message, setMessage] = useState("" as string);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleSubmit = () => {
 		addChat(message);
@@ -20,6 +27,9 @@ const Chat = () => {
 	useEffect(() => {
 		scrollToBottom();
 	}, [chats]);
+	useEffect(() => {
+		scrollToBottom();
+	}, []);
 
 	return (
 		<Box
@@ -60,6 +70,7 @@ const Chat = () => {
 					gap: 2,
 				}}
 			>
+				{loading && <LinearProgress />}
 				<TextField
 					variant="outlined"
 					fullWidth

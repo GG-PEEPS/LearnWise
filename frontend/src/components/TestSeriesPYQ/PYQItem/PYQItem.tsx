@@ -6,7 +6,7 @@ import {
 	Paper,
 	Typography,
 } from "@mui/material";
-import React, { useContext, useState } from "react";
+import  { useContext, useState } from "react";
 import { TestseriesContext } from "../../../context/TestSeriesContextProvider";
 import EmptyTextarea from "../../../helpers/TextAreaAuto";
 import roundToNearestHalf from "../../../helpers/RoundToNearestHalf";

@@ -44,7 +44,8 @@ const TestSeriesSubject = (props: Props) => {
 							display: "flex",
 							justifyContent: "space-between",
 							flexDirection: "column",
-							height: "15vh",
+							height: "fit-content",
+							gap:"1rem"
 						}}
 					>
 						<Typography variant="h6">Previous year questions</Typography>
