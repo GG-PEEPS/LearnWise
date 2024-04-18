@@ -18,6 +18,7 @@ import TestSeries from "../screens/TestSeries/TestSeries";
 import TestSeriesContextProvider from "../context/TestSeriesContextProvider";
 import TestSeriesSubject from "../screens/TestSeries/TestSeriesSubject/TestSeriesSubject";
 import TestSeriesPYQ from "../screens/TestSeries/TestSeriesPYQ/TestSeriesPYQ";
+import Pomodoro from "../screens/Pomodorotimer/Pomodoro";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -42,6 +43,10 @@ export default createBrowserRouter([
 					{
 						path: "/calendar",
 						element: <Calendar />,
+					},
+					{
+						path: "/pomodorotimer",
+						element: <Pomodoro />,
 					},
 					{
 						path: "/assignments",
