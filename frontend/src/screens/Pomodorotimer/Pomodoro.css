@@ -1,0 +1,67 @@
+/* Pomodoro.css */
+
+.pomodoro-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 10px; /* Add space between buttons */
+  }
+  
+  .timer-container {
+    margin: 20px 0; /* Add margin above and below the timer */
+  }
+  
+  .timer {
+    position: relative; /* Position relative for absolute positioning of the ring */
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid white; /* Add white border */
+    border-radius: 50%; /* Make it a circle */
+  }
+  
+  .timer h3 {
+    margin: 0;
+  }
+  
+  /* Animation for the ring */
+  @keyframes ring {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  
+  .ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid red;
+    border-radius: 50%;
+    animation: ring 1s ease-out forwards; /* Apply animation to the ring */
+  }
+  .music-button-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Add space between music buttons */
+  }
+  
+  .music-controls button {
+    margin-right: 5px; /* Add space between play and pause buttons */
+  }
+  
+  

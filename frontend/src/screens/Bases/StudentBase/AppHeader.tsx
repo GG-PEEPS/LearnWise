@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import useRequestAuth from "../../../hooks/useRequestAuth";
 import { AuthContext } from "../../../context/AuthContextProvider";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import { useNavigate } from "react-router-dom";
 
 const modalStyle = {
@@ -112,6 +113,16 @@ export function AppHeader({
 				color="inherit"
 				size="large"
 				onClick={() => {
+					router("/pomodorotimer");
+				}}
+			>
+				<AccessAlarmIcon />
+			</IconButton>
+
+			<IconButton
+				color="inherit"
+				size="large"
+				onClick={() => {
 					router("/calendar");
 				}}
 			>
@@ -203,3 +214,4 @@ AppHeader.propTypes = {
 };
 
 export default AppHeader;
+
