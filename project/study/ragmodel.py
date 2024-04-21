@@ -72,10 +72,10 @@ Use the following pieces of context to make a question paper containing 20 quest
 {question}
 
 {context}
-Answer Format: give in json format
-"questions": [
-  <"question": "...", "answer": "...">
-]
+RETURN ANSWER IN THE FOLLOWING FORMAT AS A VALID JSON OBJECT 
+    "questions": [
+    <"question": "...", "answer": "...">
+    ]
 """
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 

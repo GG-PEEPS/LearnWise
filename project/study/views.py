@@ -249,11 +249,16 @@ def get_faq(request,subject_id):
 })
 
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
-    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.7, convert_system_message_to_human=True)
     pdf_directory = os.getcwd()+"/study/mediafiles/notes/"+str(subject_id)
     vector_index = pdf2vec(pdf_directory,embeddings_model)
 
     x=getFAQ(gemini_model,vector_index)
+    ctr = 0
+    while not x or ctr < 4:
+        x = getFAQ(gemini_model,vector_index)
+        x = parse_json_from_gemini(x) 
+        ctr +=1
     FAQCache[subject_id]=json.loads(x['result'])
     cache.set(subject_id,json.loads(x['result']),timeout=None)
     return Response(json.loads(x['result']),status=status.HTTP_200_OK)
@@ -273,10 +278,15 @@ def scoreStudent(request):
     if cached_score:
         return Response(cached_score, status=status.HTTP_200_OK)
 
-    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.7, convert_system_message_to_human=True)
     sbert_model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
 
     ai_answer = create_comparison_model(gemini_model, q)
+    ctr = 0
+    while not ai_answer or ctr < 4:
+        ai_answer = create_comparison_model(gemini_model,q)
+        ai_answer = parse_json_from_gemini(ai_answer) 
+        ctr +=1
     semantic_score = compare_answers(sbert_model, a, ai_answer)
     score = {"score": semantic_score}
 
@@ -294,9 +304,14 @@ def getAnswer(request):
     if cached_answer:
         return Response(cached_answer, status=status.HTTP_200_OK)
 
-    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.7, convert_system_message_to_human=True)
 
     ai_answer = create_comparison_model(gemini_model, q)
+    ctr = 0
+    while not ai_answer or ctr < 4:
+        ai_answer = create_comparison_model(gemini_model,q)
+        ai_answer = parse_json_from_gemini(ai_answer) 
+        ctr +=1
     ans = {"question": q, "answer": ai_answer}
 
     cache.set(q, ans, timeout=None)  

@@ -14,6 +14,23 @@ from sentence_transformers import util
 import google.generativeai as genai
 from PIL import Image
 
+import re
+
+
+def parse_json_from_gemini(json_str: str):
+
+    try:
+        json_str = json_str.strip()
+        json_match = re.search(r"```json\s*(.*?)\s*```", json_str, re.DOTALL)
+
+        if json_match:
+            json_str = json_match.group(1)
+
+        return json.loads(json_str)
+    except (json.JSONDecodeError, AttributeError):
+        print("Error parsing Json")
+        return None
+    
 
 def load_and_split_pdfs(pdf_directory):
     page_contents = []
@@ -75,7 +92,8 @@ def get_gemini_response(image):
     # image = Image.open(image_path)
 
     model = genai.GenerativeModel("gemini-pro-vision")
-    response = model.generate_content([image, prompt])
+    response = model.generate_content([image, prompt],
+                                      generation_config=genai.types.GenerationConfig(temperature=0.6))
     return json.loads(response.text)
 
 
@@ -121,7 +139,8 @@ def create_comparison_model(gemini_pro_model, question):
     # image = Image.open(image_path)
 
     model = genai.GenerativeModel("gemini-pro")
-    response = model.generate_content([prompt])
+    response = model.generate_content([prompt],
+                                      generation_config=genai.types.GenerationConfig(temperature=0.6))
     return response.text
 
 
@@ -129,4 +148,35 @@ def compare_answers(model, student_answer, rag_answer):
     embeddings = model.encode([rag_answer, student_answer])
     similarity_score = util.cos_sim(embeddings[0], embeddings[1])
     return similarity_score.item()
+
+
+
+def getTestSeriesQuestions(questions, words):
+
+    prompt = f"""
+    Give 10 relevant questions from the following list of questions in {words} Words
+    Questions: {str(questions)}
+    Helpful Answer: Provide the answer in a valid json object of list of strings.
+    """
+    # image = Image.open(image_path)
+
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content([prompt],
+                                      generation_config=genai.types.GenerationConfig(temperature=0.6))
+    return response.text
+
+
+def getMCQs(subject):
+    prompt = f"""
+    Give 10 Multiple Choice Questions (MCQs) with options and correct answers relevant to the subject
+    SUBJECT : {subject}
+    Helpful Answer: Provide the answer in a valid json object, which have questions, options and correct answer as keys
+    """
+    # image = Image.open(image_path)
+
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content([prompt],
+                                      generation_config=genai.types.GenerationConfig(temperature=0.6))
+    return response.text
+
 
