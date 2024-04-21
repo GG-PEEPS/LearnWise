@@ -5,6 +5,8 @@ from rest_framework import status
 from sentence_transformers import SentenceTransformer
 from django.db import models
 import hashlib
+from langchain_groq import ChatGroq
+import re
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from .models import Subject,Document
@@ -15,6 +17,8 @@ from .scorestudent import create_comparison_model, compare_answers
 from .ragmodel import getFAQ
 from django.conf import settings
 import time
+
+groq_api_key=os.environ['GROQ_API_KEY']
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -249,19 +253,26 @@ def get_faq(request,subject_id):
 })
 
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
-    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.7, convert_system_message_to_human=True)
+    # gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, convert_system_message_to_human=True)
     pdf_directory = os.getcwd()+"/study/mediafiles/notes/"+str(subject_id)
     vector_index = pdf2vec(pdf_directory,embeddings_model)
-
-    x=getFAQ(gemini_model,vector_index)
+    llm=ChatGroq(groq_api_key=groq_api_key,
+             model_name="llama3-8b-8192")
+    x=getFAQ(llm,vector_index)
+    x = x['result']
+    pattern = r'```(.+?)```'
+    matches = re.findall(pattern, x, re.DOTALL)
+    for match in matches:
+        x = match.strip()
+    # print(x)
     ctr = 0
-    while not x or ctr < 4:
-        x = getFAQ(gemini_model,vector_index)
-        x = parse_json_from_gemini(x) 
-        ctr +=1
-    FAQCache[subject_id]=json.loads(x['result'])
-    cache.set(subject_id,json.loads(x['result']),timeout=None)
-    return Response(json.loads(x['result']),status=status.HTTP_200_OK)
+    # while not x or ctr < 4:
+    #     x = getFAQ(llm,vector_index)
+    #     # x = parse_json_from_gemini(x['result']) 
+    #     ctr +=1
+    FAQCache[subject_id]=json.loads(x)
+    cache.set(subject_id,json.loads(x),timeout=None)
+    return Response(json.loads(x),status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

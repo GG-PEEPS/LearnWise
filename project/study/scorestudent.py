@@ -87,7 +87,7 @@ def get_gemini_response(image):
     - Question
     - Answer 
 
-    STRICTLY RETURN IN THIS FORMAT {{"output":[<questions with answers>]}}
+    STRICTLY RETURN IN THIS VALID JSON FORMAT {{"output":[<questions with answers>]}}
     """
     # image = Image.open(image_path)
 

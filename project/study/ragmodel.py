@@ -4,6 +4,7 @@ import os
 import fitz
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain import hub
 
 from langchain import PromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -66,29 +67,29 @@ def create_qa_chain_model(gemini_pro_model, vector_index, question):
     return result
 
 def getFAQ(gemini_pro_model, vector_index):
-    template = """
-Use the following pieces of context to make a question paper containing 20 questions along with the answer in around 500 words. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer around 500 words strictly.
+    # template = """
+    # Use the following pieces of context to make a question paper containing 20 questions along with the answer in around 500 words. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer around 500 words strictly.
+    # {context}
 
-{question}
-
-{context}
-RETURN ANSWER IN THE FOLLOWING FORMAT AS A VALID JSON OBJECT 
-    "questions": [
-    <"question": "...", "answer": "...">
-    ]
-"""
-    QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
-
+    # {question}
+    # """
+    # QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
+    prompt = hub.pull("rlm/rag-prompt")
     # Create a RetrievalQA instance with questions
     qa_chain = RetrievalQA.from_chain_type(
         gemini_pro_model,
         retriever=vector_index,
         # return_source_documents=True,
-        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
+        chain_type_kwargs={"prompt": prompt},
     )
-    quest="What is the most probable questions from the context?"
-    result = qa_chain({"query": quest})
+    quest="""
+    Give me 20 most probable questions from the context along with the answer in 500 words each 
+    RETURN ANSWER AS A VALID JSON OBJECT with question and answers as keys
 
+    DO NOT SAY ANYTHING ELSE
+    """
+    result = qa_chain({"query": quest})
+    
     return result
 
 
