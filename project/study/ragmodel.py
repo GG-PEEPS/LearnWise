@@ -5,7 +5,9 @@ import fitz
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain import hub
-
+from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain.output_parsers import ResponseSchema
+from langchain.output_parsers import StructuredOutputParser
 from langchain import PromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
@@ -43,7 +45,7 @@ def pdf2vec(pdf_directory,embeddings_model):
     vectors = Chroma.from_texts(texts, embeddings_model).as_retriever(search_kwargs={"k": 5})
     return vectors
 
-def create_qa_chain_model(gemini_pro_model, vector_index, question):
+def create_qa_chain_model(llm, vector_index, question):
     template = """
     Use the following pieces of context to answer the questions asked by the user. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer as concise as possible. 
     {context}
@@ -55,74 +57,54 @@ def create_qa_chain_model(gemini_pro_model, vector_index, question):
 
     # Create a RetrievalQA instance with questions
     qa_chain = RetrievalQA.from_chain_type(
-        gemini_pro_model,
+        llm,
         retriever=vector_index,
         return_source_documents=True,
         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
     )
 
-    # Generate response using the model
     result = qa_chain({"query": question})
 
     return result
 
-def getFAQ(gemini_pro_model, vector_index):
-    # template = """
-    # Use the following pieces of context to make a question paper containing 20 questions along with the answer in around 500 words. If you don't know the answer, just say that you don't know, don't try to make up an answer. Keep the answer around 500 words strictly.
-    # {context}
+def getFAQ(llm, vector_index):
+    solutions_schema = ResponseSchema(name="solutions", 
+                                      description= """array of of 5 solutions in the following format: [
+    {{ "question": string // generated question from context',  "answer": string // generated answer of the question' }}
+]
+""",)
 
-    # {question}
-    # """
-    # QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
-    prompt = hub.pull("rlm/rag-prompt")
-    # Create a RetrievalQA instance with questions
+    response_schemas = [solutions_schema]
+    output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+
+    format_instructions = output_parser.get_format_instructions().replace(
+    '"solutions": string', '"solutions": array of objects'
+    )
+
+    template_string = """You are a proffessor who is setting a paper. \
+
+    Take the context below delimited by triple backticks
+    context: ```{context}```
+
+    then based on the context give me 5 most probable questions from the context along with its answer in minimum 500 words each 
+
+    {format_instructions}
+    """
+    # print(format_instructions)
+    prompt = ChatPromptTemplate(
+    messages=[
+        HumanMessagePromptTemplate.from_template(template_string)  
+    ],
+    partial_variables={"format_instructions": format_instructions},
+    output_parser=output_parser # here we add the output parser to the Prompt template
+    )
+    # print(vector_index)
     qa_chain = RetrievalQA.from_chain_type(
-        gemini_pro_model,
+        llm,
         retriever=vector_index,
-        # return_source_documents=True,
         chain_type_kwargs={"prompt": prompt},
     )
-    quest="""
-    Give me 20 most probable questions from the context along with the answer in 500 words each 
-    RETURN ANSWER AS A VALID JSON OBJECT with question and answers as keys
-
-    DO NOT SAY ANYTHING ELSE
-    """
+    quest="Generate Questions"
     result = qa_chain({"query": quest})
-    
     return result
 
-
-
-if __name__ == "__main__":
-    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
-
-    gemini_model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, temperature=0.2, convert_system_message_to_human=True)
-
-    pdf_directory = os.getcwd()+"/data"
-    vector_index = pdf2vec(pdf_directory,embeddings_model)
-
-
-    question = "What is CIA triad?"
-
-    questions=[
-    {
-        "id": 1,
-        "subject": 3,
-        "created_at": "2024-03-24T13:31:49Z",
-        "from_type": "USER",
-        "message": "What is in CIA?"
-    },
-    {
-        "id": 2,
-        "subject": 3,
-        "created_at": "2024-03-24T13:32:35Z",
-        "from_type": "SYSTEM",
-        "message": "CIA is a very beautiful thing"
-    }
-]
-
-
-    x = create_qa_chain_model(gemini_model,vector_index,question,questions=json.dumps(questions,separators=(',', ':')))
-
-    print(x['result'])

@@ -7,9 +7,12 @@ import fitz
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain import PromptTemplate
+from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain.output_parsers import ResponseSchema
+from langchain.output_parsers import StructuredOutputParser
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
-from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQA, LLMChain
 from sentence_transformers import util
 import google.generativeai as genai
 from PIL import Image
@@ -73,7 +76,6 @@ def create_qa_chain_model(gemini_pro_model, vector_index, question):
     qa_chain = RetrievalQA.from_chain_type(
         gemini_pro_model,
         retriever=vector_index,
-        # return_source_documents=True,
         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT},
     )
     result = qa_chain({"query": question})
@@ -130,7 +132,7 @@ def score_student(sbert_model, gemini_model, vector_index, images):
             print(e)
     return op
 
-def create_comparison_model(gemini_pro_model, question):
+def create_comparison_model(question):
     prompt = f"""
     Answer the question asked by the user in detail. 
     Question: {question}
@@ -151,32 +153,102 @@ def compare_answers(model, student_answer, rag_answer):
 
 
 
-def getTestSeriesQuestions(questions, words):
+def getTestSeriesQuestions(llm, questions, words):
+    solutions_schema = ResponseSchema(name="solutions", 
+                                      description= """array of of 10 solutions in the following format: [
+    {{ "question": string // generated question from context',  "answer": string // generated answer of the question' }}
+]
+""",)
 
-    prompt = f"""
-    Give 10 relevant questions from the following list of questions in {words} Words
-    Questions: {str(questions)}
-    Helpful Answer: Provide the answer in a valid json object of list of strings.
+    response_schemas = [solutions_schema]
+
+    output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+
+    format_instructions = output_parser.get_format_instructions().replace(
+    '"solutions": string', '"solutions": array of objects'
+)
+    template_string = """You are a professor who is setting a paper. 
+
+    Take the context below delimited by triple backticks
+    context: ```{context}```
+
+    then based on the context give 10 relevant questions from the following list of questions with answers in minimum {words} words each
+
+    {format_instructions}
     """
-    # image = Image.open(image_path)
 
-    model = genai.GenerativeModel("gemini-pro")
-    response = model.generate_content([prompt],
-                                      generation_config=genai.types.GenerationConfig(temperature=0.6))
-    return response.text
+    prompt = ChatPromptTemplate(
+    messages=[
+        HumanMessagePromptTemplate.from_template(template_string)  
+    ],
+    input_variables=["context", "words"],
+    partial_variables={"format_instructions": format_instructions},
+    output_parser=output_parser 
+    )
+    chain = LLMChain(llm=llm, 
+                 prompt=prompt)
+    # print(questions, words)
+    try:
+        response = chain.predict_and_parse(context = ' '.join(questions), words = str(words))
+    except: 
+        response = chain.predict(context = ' '.join(questions), words = str(words))
+        print(type(response),response)
+        
+        pattern = r'```json(.+?)```'
+        matches = re.findall(pattern, x, re.DOTALL)
+        for match in matches:
+            print("match true")
+            x = match.strip()
+        response = json.loads(x)
+    # print(response)
+    return response
 
 
-def getMCQs(subject):
-    prompt = f"""
-    Give 10 Multiple Choice Questions (MCQs) with options and correct answers relevant to the subject
-    SUBJECT : {subject}
-    Helpful Answer: Provide the answer in a valid json object, which have questions, options and correct answer as keys
+
+
+def getMCQs(llm,subject):
+    mcqs_schema = ResponseSchema(name="solutions", 
+                                      description= """array of of 10 solutions in the following format:    
+                                      {{ "question": string // generated question from context',  "options": [string] // list of possible correct answer options for the question, "correct_answer" : string // correct answer from the list of options ' }}
+]
+""",)
+
+    response_schemas = [mcqs_schema]
+    output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+
+    format_instructions = output_parser.get_format_instructions().replace(
+        '"solutions": string', '"solutions": array of objects'
+    )
+    template_string = """You are a professor who is setting a paper. 
+
+    Take the subject below delimited by triple backticks
+    subject: ```{context}```
+
+    then based on the context give 10 Multiple Choice Questions (MCQs) with options and correct answers relevant to the subject
+
+    {format_instructions}
     """
-    # image = Image.open(image_path)
+    prompt = ChatPromptTemplate(
+    messages=[
+        HumanMessagePromptTemplate.from_template(template_string)  
+    ],
+    input_variables=["context", "words"],
+    partial_variables={"format_instructions": format_instructions},
+    output_parser=output_parser 
+    )
+    chain = LLMChain(llm=llm, 
+                 prompt=prompt)
+    try:
+        response = chain.predict_and_parse(context = subject)
+    except:
+        response = chain.predict(context = subject)
+        pattern = r'```json(.+?)```'
+        matches = re.findall(pattern, x, re.DOTALL)
+        for match in matches:
+            x = match.strip()
+        response = json.loads(x)
+    print(response)
+    return response
 
-    model = genai.GenerativeModel("gemini-pro")
-    response = model.generate_content([prompt],
-                                      generation_config=genai.types.GenerationConfig(temperature=0.6))
-    return response.text
 
 

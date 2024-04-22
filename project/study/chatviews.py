@@ -65,36 +65,3 @@ def create_chat(request,subject_id):
 
 
 
-    
-    # functions= [
-    # {
-    #     "name": "store_answer",
-    #     "parameters": {
-    #         "type": "object",
-    #         "properties": {
-    #             "Questions": {
-    #                 "type": "array",
-    #                 "items": {
-    #                     "type": "object",
-    #                     "properties": {
-    #                         "django": {
-    #                             "type": "string",
-    #                             "description": "yes/no answer for skill in Django"
-    #                         },
-    #                         "python": {
-    #                             "type": "string",
-    #                             "description": "yes/no answer for skill in Python"
-    #                         },
-    #                         "work_experience": {
-    #                             "type": "string",
-    #                             "description": "Number of months of previous work experience"
-    #                         }
-    #                     }
-    #                 },
-    #                 "description": "list of skills"
-    #             }
-    #         }
-    #     },
-    #     "description": "Store overall list of skills"
-    # }
-    #     ]
