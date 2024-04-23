@@ -6,16 +6,13 @@ import {
 	Grid,
 	InputLabel,
 	MenuItem,
-	Paper,
 	Select,
 	Typography,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import PYQItem from "../../../components/TestSeriesPYQ/PYQItem/PYQItem";
 
-type Props = {};
-
-const TestSeriesPYQ = (props: Props) => {
+const TestSeriesPYQ = () => {
 	const { pyqs, subjectName } = useContext(TestseriesContext);
 	const { year } = useParams();
 	const [selectedYear, setSelectedYear] = React.useState(0);
@@ -65,7 +62,12 @@ const TestSeriesPYQ = (props: Props) => {
 						<Typography variant="h5">{pyqs[selectedIndex]?.year}</Typography>
 						<Grid container>
 							{pyqs[selectedIndex]?.questions.map((question, index) => (
-								<PYQItem key={index} question={question} index={index} />
+								<PYQItem
+									key={index}
+									question={question}
+									index={index}
+									marks={question.marks}
+								/>
 							))}
 						</Grid>
 					</Box>

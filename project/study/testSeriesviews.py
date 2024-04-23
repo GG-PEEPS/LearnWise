@@ -9,6 +9,8 @@ import os
 from .models import PYQSubject, PYQquestions, Subject
 from .serializers import PYQSubjectSerialiser
 from django.db.models import Count
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 groq_api_key=os.environ['GROQ_API_KEY']
 
@@ -39,7 +41,12 @@ def pyq_by_year_subject_view(request, subject_id):
         return Response(data)
     
 @api_view(['GET'])
+@cache_page(60 * 60)
 def generateTest(request, subject_id):
+    cached_score = cache.get(subject_id)
+    if cached_score:
+        return Response(cached_score, status=status.HTTP_200_OK)
+    
     if request.method == 'GET':
         llm=ChatGroq(groq_api_key=groq_api_key,
              model_name="llama3-8b-8192")
@@ -84,7 +91,7 @@ def generateTest(request, subject_id):
         test.append({"questions": x.get('solutions',[]),
                     "marks" : 1})
 
-
+        cache.set(subject_id, test, timeout=None)
         return Response(test)
 
 

@@ -6,19 +6,20 @@ import {
 	Paper,
 	Typography,
 } from "@mui/material";
-import  { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { TestseriesContext } from "../../../context/TestSeriesContextProvider";
 import EmptyTextarea from "../../../helpers/TextAreaAuto";
 import roundToNearestHalf from "../../../helpers/RoundToNearestHalf";
+import { MockTestQuestionsType } from "../../../global";
 type Props = {
-	question: {
-		question: string;
-		marks: string;
-	};
+	question: MockTestQuestionsType;
 	index: number;
+	marks: string;
+	mock?: boolean;
 };
+const arr = ["A", "B", "C", "D"];
 
-const PYQItem = ({ question, index }: Props) => {
+const PYQItem = ({ question, index, marks, mock = false }: Props) => {
 	const { getAnswer, getScore } = useContext(TestseriesContext);
 	const [viewAnswer, setViewAnswer] = useState<boolean>(false);
 	const [viewUserAnswer, setViewUserAnswer] = useState<boolean>(false);
@@ -32,7 +33,15 @@ const PYQItem = ({ question, index }: Props) => {
 		setLoading(true);
 		setViewAnswer((prev) => !prev);
 		setViewUserAnswer(false);
-		setAnswer(await getAnswer(question.question));
+		if (mock) {
+			if (marks === "1") {
+				setAnswer(question?.correct_answer || "No answer found");
+			} else {
+				setAnswer(question?.answer || "No answer found");
+			}
+		} else {
+			setAnswer(await getAnswer(question.question));
+		}
 		setLoading(false);
 	};
 	const handleGetUserAnswer = async () => {
@@ -66,8 +75,19 @@ const PYQItem = ({ question, index }: Props) => {
 		>
 			<Box sx={{ p: 2, mt: 2 }}>
 				<Typography variant="h6">{question.question}</Typography>
-				<Typography variant="body1">Marks: {question.marks}</Typography>
+				{question.options && (
+					<Box>
+						<Typography variant="body1">Options: </Typography>
+						{question.options.map((option, key) => (
+							<Typography key={key} variant="body1">
+								{arr[key]}. {option}
+							</Typography>
+						))}
+					</Box>
+				)}
+				<Typography variant="body1">Marks: {marks}</Typography>
 			</Box>
+
 			<Box>
 				<Button
 					variant="contained"
@@ -77,14 +97,16 @@ const PYQItem = ({ question, index }: Props) => {
 				>
 					View Answer
 				</Button>
-				<Button
-					variant="contained"
-					color="primary"
-					sx={{ m: 2 }}
-					onClick={() => handleGetUserAnswer()}
-				>
-					View User Answer
-				</Button>
+				{(!mock || marks != "1") && (
+					<Button
+						variant="contained"
+						color="primary"
+						sx={{ m: 2 }}
+						onClick={() => handleGetUserAnswer()}
+					>
+						View User Answer
+					</Button>
+				)}
 			</Box>
 			{viewAnswer && (
 				<Box sx={{ p: 2 }}>
