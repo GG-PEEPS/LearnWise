@@ -19,14 +19,14 @@ const darkTheme = createTheme({
 function App() {
 	return (
 		<>
-    <ThemeProvider theme={darkTheme}>
-			<SnackbarProvider>
-				<AuthContextProvider>
-					<CssBaseline />
-					<RouterProvider router={routes} />
-				</AuthContextProvider>
-			</SnackbarProvider>
-    </ThemeProvider>
+			<ThemeProvider theme={darkTheme}>
+				<SnackbarProvider>
+					<AuthContextProvider>
+						<CssBaseline />
+						<RouterProvider router={routes} />
+					</AuthContextProvider>
+				</SnackbarProvider>
+			</ThemeProvider>
 		</>
 	);
 }

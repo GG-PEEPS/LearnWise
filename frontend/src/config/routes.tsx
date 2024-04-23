@@ -19,6 +19,7 @@ import TestSeriesContextProvider from "../context/TestSeriesContextProvider";
 import TestSeriesSubject from "../screens/TestSeries/TestSeriesSubject/TestSeriesSubject";
 import TestSeriesPYQ from "../screens/TestSeries/TestSeriesPYQ/TestSeriesPYQ";
 import Pomodoro from "../screens/Pomodorotimer/Pomodoro";
+import MockTest from "../screens/TestSeries/MockTest/MockTest";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default createBrowserRouter([
@@ -100,9 +101,13 @@ export default createBrowserRouter([
 								element: <TestSeriesSubject />,
 							},
 							{
-								path:"/test-series/:subjectId/previous-year-questions/:year",
-								element:<TestSeriesPYQ/>
-							}
+								path: "/test-series/:subjectId/previous-year-questions/:year",
+								element: <TestSeriesPYQ />,
+							},
+							{
+								path: "/test-series/:subjectId/mock-tests",
+								element: <MockTest />,
+							},
 						],
 					},
 				],

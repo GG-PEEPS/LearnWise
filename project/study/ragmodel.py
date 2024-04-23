@@ -86,11 +86,10 @@ def getFAQ(llm, vector_index):
     Take the context below delimited by triple backticks
     context: ```{context}```
 
-    then based on the context give me 8 most probable questions from the context along with its answer in minimum 100 words each 
+    then based on the context give me 5 most probable questions from the context along with its answer in minimum 100 words each 
 
     {format_instructions}
     """
-    print(format_instructions)
     prompt = ChatPromptTemplate(
     messages=[
         HumanMessagePromptTemplate.from_template(template_string)  
@@ -98,7 +97,6 @@ def getFAQ(llm, vector_index):
     partial_variables={"format_instructions": format_instructions},
     output_parser=output_parser # here we add the output parser to the Prompt template
     )
-    print(vector_index)
     qa_chain = RetrievalQA.from_chain_type(
         llm,
         retriever=vector_index,
@@ -106,6 +104,5 @@ def getFAQ(llm, vector_index):
     )
     quest="Generate Questions"
     result = qa_chain({"query": quest})
-    print(result)
     return result
 

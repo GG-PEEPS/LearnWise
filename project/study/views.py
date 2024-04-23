@@ -106,33 +106,33 @@ FAQCache={}
 @api_view(['GET'])
 @cache_page(60 * 60)
 
-def get_faq(request,subject_id):
+def get_faq(request, subject_id):
+    try:
+        cached_answer = cache.get(subject_id)
 
-    cached_answer=cache.get(subject_id)
+        if cached_answer:
+            return Response(cached_answer, status=status.HTTP_200_OK)
 
-    if cached_answer:
-        return Response(cached_answer,status=status.HTTP_200_OK)
+        embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
+        pdf_directory = os.getcwd() + "/study/mediafiles/notes/" + str(subject_id)
+        vector_index = pdf2vec(pdf_directory, embeddings_model)
+        model = "llama3-8b-8192"
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=model)
+        x = getFAQ(llm, vector_index)
+        x = x['result']
+        pattern = r'```json(.+?)```'
+        matches = re.findall(pattern, x, re.DOTALL)
+        for match in matches:
+            x = match.strip()
+        cache.set(subject_id, json.loads(x), timeout=None)
+        x = json.loads(x)
+        x = x['solutions']
+        return Response(x, status=status.HTTP_200_OK)
 
-
-
-    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
-    # llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, convert_system_message_to_human=True)
-    pdf_directory = os.getcwd()+"/study/mediafiles/notes/"+str(subject_id)
-    vector_index = pdf2vec(pdf_directory,embeddings_model)
-    model ="llama3-8b-8192"
-    llm=ChatGroq(groq_api_key=groq_api_key,
-             model_name=model)
-    x=getFAQ(llm,vector_index)
-    x = x['result']
-    pattern = r'```json(.+?)```'
-    matches = re.findall(pattern, x, re.DOTALL)
-    for match in matches:
-        x = match.strip()
-    cache.set(subject_id,json.loads(x),timeout=None)
-    x = json.loads(x)
-    x = x['solutions']
-    return Response(x,status=status.HTTP_200_OK)
-
+    except Exception as e:
+        # Handle the exception
+        error_message = {"error": str(e)}
+        return Response(error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @cache_page(60 * 60)
