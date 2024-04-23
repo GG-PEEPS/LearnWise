@@ -69,7 +69,7 @@ def create_qa_chain_model(llm, vector_index, question):
 
 def getFAQ(llm, vector_index):
     solutions_schema = ResponseSchema(name="solutions", 
-                                      description= """array of of 5 solutions in the following format: [
+                                      description= """array of of 10 solutions in the following format: [
     {{ "question": string // generated question from context',  "answer": string // generated answer of the question' }}
 ]
 """,)

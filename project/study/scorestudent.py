@@ -138,7 +138,6 @@ def create_comparison_model(question):
     Question: {question}
     Helpful Answer: Provide the response in one single string.
     """
-    # image = Image.open(image_path)
 
     model = genai.GenerativeModel("gemini-pro")
     response = model.generate_content([prompt],
