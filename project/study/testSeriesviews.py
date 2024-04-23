@@ -11,6 +11,12 @@ from .serializers import PYQSubjectSerialiser
 from django.db.models import Count
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
+from reportlab.pdfgen import canvas 
+from reportlab.pdfbase.ttfonts import TTFont 
+from reportlab.pdfbase import pdfmetrics 
+from reportlab.lib import colors 
+from docx import Document as docMaker
+from docx2pdf import convert
 
 groq_api_key=os.environ['GROQ_API_KEY']
 
@@ -95,4 +101,31 @@ def generateTest(request, subject_id):
         return Response(test)
 
 
+@api_view(['POST'])
+def pdfTestSeriesQuestions(request,subject_id):
+    data=request.data
+    
+
+    document = docMaker()
+    document.add_heading('Test Series', 0)
+    for section in data:
+        document.add_heading(f"{section['marks']} mark questions", level=1)
+        ctr=1
+        for question_data in section['questions']:
+            document.add_paragraph(f"{ctr}). {question_data['question']}")
+            ctr+=1
+            if section['marks'] == 1:  
+                for idx, option in enumerate(question_data['options']):
+                    document.add_paragraph(f"{chr(97 + idx)}. {option}")
+
+    document.save(f'./study/mediafiles/{subject_id}.docx')
+
+    convert(f'./study/mediafiles/{subject_id}.docx', f'./study/mediafiles/{subject_id}.pdf')
+    os.remove(f'./study/mediafiles/{subject_id}.docx')
+
+    return Response(
+        {
+            "file": f'/media/{subject_id}.pdf'
+        }
+    )
 
