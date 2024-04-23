@@ -132,6 +132,7 @@ def get_faq(request, subject_id):
     except Exception as e:
         # Handle the exception
         error_message = {"error": str(e)}
+        print(e)
         return Response(error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])

@@ -56,7 +56,6 @@ const MockTest = () => {
 			</Box>
 			{loading && <LinearProgress sx={{
 				marginTop: "1rem",
-			
 			}}/>}
 			{!loading &&
 				mockTestData.map((data, key) => {
