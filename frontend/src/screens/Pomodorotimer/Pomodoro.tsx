@@ -2,21 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Button, Typography, Card, CardContent } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
-import './Pomodoro.css'; 
-import ringSound from '../../assets/ringSound.mp3'; 
-import lofiMusic1 from '../../assets/lofiMusic1.mp3'; 
-import lofiMusic2 from '../../assets/lofiMusic2.mp3'; 
+import './Pomodoro.css';
+import ringSound from '../../assets/ringSound.mp3';
+import lofiMusic1 from '../../assets/lofiMusic1.mp3';
+import lofiMusic2 from '../../assets/lofiMusic2.mp3';
 
 const Pomodoro: React.FC = () => {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [initialMinutes, setInitialMinutes] = useState(25); 
+  const [initialMinutes, setInitialMinutes] = useState(25);
   const [isTimeUp, setIsTimeUp] = useState(false);
-  const [isMusicVisible, setIsMusicVisible] = useState(false); 
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false); 
-  const [selectedMusic, setSelectedMusic] = useState<HTMLAudioElement | null>(null); 
-  const [musicFiles] = useState<HTMLAudioElement[]>([new Audio(lofiMusic1), new Audio(lofiMusic2)]); 
+  const [isMusicVisible, setIsMusicVisible] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [selectedMusic, setSelectedMusic] = useState<HTMLAudioElement | null>(null);
+  const [musicFiles] = useState<HTMLAudioElement[]>([new Audio(lofiMusic1), new Audio(lofiMusic2)]);
+  const [selectedTab, setSelectedTab] = useState<number>(25); // Store the selected tab separately
 
   const audio = new Audio(ringSound); // Create a new Audio instance
 
@@ -30,12 +31,12 @@ const Pomodoro: React.FC = () => {
             clearInterval(interval);
             setIsActive(false);
             setIsTimeUp(true);
-            setMinutes(initialMinutes); 
+            setMinutes(initialMinutes);
             setSeconds(0);
-            audio.play(); 
+            audio.play();
           } else {
             setMinutes((prev) => prev - 1);
-            setSeconds(59); 
+            setSeconds(59);
           }
         } else {
           setSeconds((prev) => prev - 1);
@@ -53,7 +54,8 @@ const Pomodoro: React.FC = () => {
     setMinutes(duration);
     setSeconds(0);
     setIsActive(true);
-    setIsTimeUp(false); 
+    setIsTimeUp(false);
+    setSelectedTab(duration); // Set the selected tab when timer starts
   };
 
   const playMusic = (music: HTMLAudioElement) => {
@@ -61,34 +63,52 @@ const Pomodoro: React.FC = () => {
       music.currentTime = 0;
     } else {
       music.play();
-      setIsMusicPlaying(true); 
+      setIsMusicPlaying(true);
     }
   };
 
   const pauseMusic = (music: HTMLAudioElement) => {
-    music.pause(); 
-    setIsMusicPlaying(false); 
+    music.pause();
+    setIsMusicPlaying(false);
   };
 
   const resetTimer = () => {
-    setMinutes(initialMinutes); 
+    setMinutes(initialMinutes);
     setSeconds(0);
     setIsActive(false);
-    setIsTimeUp(false); 
+    setIsTimeUp(false);
   };
 
   return (
     <div className="pomodoro-container">
-      <div className="button-container">
-        <Button variant="contained" onClick={() => startTimer(25)}>
+      <div className="navigation-tabs">
+        <button
+          className={selectedTab === 25 ? 'active' : ''}
+          onClick={() => {
+            startTimer(25);
+            setSelectedTab(25);
+          }}
+        >
           Pomodoro
-        </Button>
-        <Button variant="contained" onClick={() => startTimer(10)}>
+        </button>
+        <button
+          className={selectedTab === 10 ? 'active' : ''}
+          onClick={() => {
+            startTimer(10);
+            setSelectedTab(10);
+          }}
+        >
           Long Break
-        </Button>
-        <Button variant="contained" onClick={() => startTimer(5)}>
+        </button>
+        <button
+          className={selectedTab === 5 ? 'active' : ''}
+          onClick={() => {
+            startTimer(5);
+            setSelectedTab(5);
+          }}
+        >
           Short Break
-        </Button>
+        </button>
       </div>
       <div className="timer-container">
         <div className="timer">
@@ -113,36 +133,37 @@ const Pomodoro: React.FC = () => {
       </div>
       {isMusicVisible && (
         <div className="music-container">
-          {musicFiles.map((music, index) => (
-            <Card key={index} className="music-card" style={{ margin: '2rem' }}>
-              <CardContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography variant="h6" gutterBottom style={{ marginRight: '10rem' }}>
-                  {`Music ${index + 1}`}
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    if (selectedMusic !== music) {
-                      setSelectedMusic(music);
-                      playMusic(music);
+        {musicFiles.map((music, index) => (
+          <Card key={index} className="music-card" style={{ margin: '2rem' }}>
+            <CardContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" gutterBottom style={{ marginRight: '10rem' }}>
+                {`Music ${index + 1}`}
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  if (selectedMusic !== music) {
+                    setSelectedMusic(music);
+                    playMusic(music);
+                  } else {
+                    if (isMusicPlaying) {
+                      pauseMusic(music);
                     } else {
-                      if (isMusicPlaying) {
-                        pauseMusic(music);
-                      } else {
-                        playMusic(music);
-                      }
+                      playMusic(music);
                     }
-                  }}
-                >
-                  {isMusicPlaying && selectedMusic === music ? <PauseIcon /> : <PlayArrowIcon />}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+                  }
+                }}
+              >
+                {isMusicPlaying && selectedMusic === music ? <PauseIcon /> : <PlayArrowIcon />}
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )}
+  </div>
+);
 };
+
 
 export default Pomodoro;
