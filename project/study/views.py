@@ -105,6 +105,7 @@ FAQCache={}
 
 @api_view(['GET'])
 @cache_page(60 * 60)
+
 def get_faq(request,subject_id):
 
     cached_answer=cache.get(subject_id)
@@ -113,37 +114,23 @@ def get_faq(request,subject_id):
         return Response(cached_answer,status=status.HTTP_200_OK)
 
 
-    if subject_id in FAQCache:
-        return Response(FAQCache[subject_id],status=status.HTTP_200_OK)
 
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=API_KEY)
     # llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=API_KEY, convert_system_message_to_human=True)
     pdf_directory = os.getcwd()+"/study/mediafiles/notes/"+str(subject_id)
-    print(subject_id)
     vector_index = pdf2vec(pdf_directory,embeddings_model)
     model ="llama3-8b-8192"
-    # model = 'llama2-70b-4096'
     llm=ChatGroq(groq_api_key=groq_api_key,
              model_name=model)
     x=getFAQ(llm,vector_index)
-    # print(type(x))
     x = x['result']
-    print(x)
     pattern = r'```json(.+?)```'
     matches = re.findall(pattern, x, re.DOTALL)
     for match in matches:
         x = match.strip()
-    # print(x)
-    ctr = 0
-    # while not x or ctr < 4:
-    #     x = getFAQ(llm,vector_index)
-    #     # x = parse_json_from_gemini(x['result']) 
-    #     ctr +=1
-    FAQCache[subject_id]=json.loads(x)
     cache.set(subject_id,json.loads(x),timeout=None)
     x = json.loads(x)
     x = x['solutions']
-    # return Response(json.loads(x),status=status.HTTP_200_OK)
     return Response(x,status=status.HTTP_200_OK)
 
 

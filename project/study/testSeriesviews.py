@@ -79,7 +79,7 @@ def generateTest(request, subject_id):
                 "marks" : 10
             })
         print("appended 10 marks")
-        subject = Subject.objects.get(pk=subject_id)
+        subject = PYQSubject.objects.get(pk=subject_id)
         x = getMCQs(llm, subject.name)
         test.append({"questions": x.get('solutions',[]),
                     "marks" : 1})

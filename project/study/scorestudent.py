@@ -247,7 +247,6 @@ def getMCQs(llm,subject):
         for match in matches:
             x = match.strip()
             response = json.loads(x)
-    print(response)
     return response
 
 

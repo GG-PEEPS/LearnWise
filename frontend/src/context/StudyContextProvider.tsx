@@ -81,6 +81,7 @@ const StudyContextProvider = ({ children }: Props) => {
 	}, [subjectId, startTime]);
 
 	useEffect(() => {
+		if (!subjectId) return;
 		axios
 			.get(
 				import.meta.env.VITE_BACKEND_URL + "/study/getDocuments/" + subjectId,
@@ -113,16 +114,17 @@ const StudyContextProvider = ({ children }: Props) => {
 	}, [subjectId]);
 
 	useEffect(() => {
+		if (!subjectId) return;
 		axios
 			.get(
 				import.meta.env.VITE_BACKEND_URL + "/study/getFAQ/" + subjectId,
 				getCommonOptions()
 			)
 			.then((res) => {
-				setQuestions(res.data.questions);
+				setQuestions(res.data);
 				setQuestionsLoader(false);
 			})
-			.catch((err): void => {
+			.catch(() => {
 				setQuestions([]);
 			});
 	}, [subjectId]);
