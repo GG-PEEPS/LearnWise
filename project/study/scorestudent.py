@@ -195,11 +195,11 @@ def getTestSeriesQuestions(llm, questions, words):
         print(type(response),response)
         
         pattern = r'```json(.+?)```'
-        matches = re.findall(pattern, x, re.DOTALL)
+        matches = re.findall(pattern, response, re.DOTALL)
         for match in matches:
             print("match true")
             x = match.strip()
-        response = json.loads(x)
+            response = json.loads(x)
     # print(response)
     return response
 
@@ -243,10 +243,10 @@ def getMCQs(llm,subject):
     except:
         response = chain.predict(context = subject)
         pattern = r'```json(.+?)```'
-        matches = re.findall(pattern, x, re.DOTALL)
+        matches = re.findall(pattern, response, re.DOTALL)
         for match in matches:
             x = match.strip()
-        response = json.loads(x)
+            response = json.loads(x)
     print(response)
     return response
 
