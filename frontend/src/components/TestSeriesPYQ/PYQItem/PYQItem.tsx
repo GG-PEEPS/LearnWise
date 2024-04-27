@@ -144,7 +144,7 @@ const PYQItem = ({ question, index, marks, mock = false }: Props) => {
 							{!loading && (
 								<Typography variant="body1">
 									Score:{" "}
-									{roundToNearestHalf(finalScore * parseFloat(question.marks))}
+									{roundToNearestHalf(finalScore * parseFloat(marks))}
 								</Typography>
 							)}
 						</>

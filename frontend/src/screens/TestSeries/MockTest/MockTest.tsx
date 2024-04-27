@@ -15,7 +15,7 @@ const MockTest = () => {
 		setLoading(true);
 		return axios
 			.get(
-				import.meta.env.VITE_BACKEND_URL + "/study/getTestSeries/1",
+				import.meta.env.VITE_BACKEND_URL + "/study/getTestSeries/" + subjectId,
 				getCommonOptions()
 			)
 			.then((res) => {
@@ -28,6 +28,31 @@ const MockTest = () => {
 					variant: "error",
 				});
 				setLoading(false);
+			});
+	};
+	const downloadPdf = () => {
+		axios
+			.post(
+				import.meta.env.VITE_BACKEND_URL +
+					"/study/pdfTestSeriesQuestions/" +
+					subjectId,
+				mockTestData,
+				getCommonOptions()
+			)
+			.then((res) => {
+				window.open(
+					import.meta.env.VITE_BACKEND_URL  + res.data.file
+				);
+				const link=document.createElement("a")
+				link.href=import.meta.env.VITE_BACKEND_URL  + res.data.file
+				link.download="mockTest.pdf"
+				// link.target="_blank"
+				link.click()
+			})
+			.catch((err) => {
+				enqueueSnackbar(formatHttpApiError(err), {
+					variant: "error",
+				});
 			});
 	};
 	const { subjectId } = useParams();
@@ -43,21 +68,41 @@ const MockTest = () => {
 				}}
 			>
 				<Typography variant="h4">Mock Questions</Typography>
-				<Button
-					variant="contained"
-					color="secondary"
-					onClick={() => {
-						getMockTest();
-					}}
-				>
-					<Add />
-					Generate random questions
-				</Button>
+				<Box>
+					{mockTestData.length > 0 && (
+						<Button
+							variant="contained"
+							color="secondary"
+							onClick={() => {
+								downloadPdf();
+							}}
+							sx={{
+								marginRight: "1rem",
+							}}
+						>
+							Download PDF
+						</Button>
+					)}
+
+					<Button
+						variant="contained"
+						color="secondary"
+						onClick={() => {
+							getMockTest();
+						}}
+					>
+						<Add />
+						Generate random questions
+					</Button>
+				</Box>
 			</Box>
-			{loading && <LinearProgress sx={{
-				marginTop: "1rem",
-			
-			}}/>}
+			{loading && (
+				<LinearProgress
+					sx={{
+						marginTop: "1rem",
+					}}
+				/>
+			)}
 			{!loading &&
 				mockTestData.map((data, key) => {
 					return (

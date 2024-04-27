@@ -1,0 +1,10 @@
+.event-style {
+    background-color: #3174AD; /* Change the background color of events */
+    border-radius: 0px;
+    opacity: 0.8;
+    color: white;
+    border: 0px;
+    display: block;
+    text-align: center; /* Not necessary, just for completeness */
+  }
+  

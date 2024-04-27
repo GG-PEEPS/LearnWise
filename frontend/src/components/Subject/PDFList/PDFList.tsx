@@ -1,8 +1,9 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import  { useContext } from "react";
+import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { StudyContext } from "../../../context/StudyContextProvider";
-
+import ShareIcon from "@mui/icons-material/Share";
+import { enqueueSnackbar } from "notistack";
 
 const PDFList = () => {
 	const navigate = useNavigate();
@@ -25,9 +26,23 @@ const PDFList = () => {
 				}}
 			>
 				<Typography variant="h5">PDFs Uploaded</Typography>
-				{pdfList.map((pdf,index) => (
-					<Typography key={pdf.id} variant="body1"  sx={{ mt: 1 }}>
-						{index+1}) {pdf.title}
+				{pdfList.map((pdf, index) => (
+					<Typography key={pdf.id} variant="body1" sx={{ mt: 1 }}>
+						{index + 1} {pdf.title}
+						<Button
+							sx={{
+								mx: 1,
+								my:1
+							}}
+							onClick={() => {
+								navigator.clipboard.writeText(import.meta.env.VITE_BACKEND_URL+ pdf.pdf_file);
+								enqueueSnackbar("Link copied to clipboard", {
+									variant: "success",
+								});
+							}}
+						>
+							<ShareIcon />
+						</Button>
 					</Typography>
 				))}
 			</Box>
