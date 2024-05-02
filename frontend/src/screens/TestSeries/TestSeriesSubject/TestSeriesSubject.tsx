@@ -40,9 +40,9 @@ const TestSeriesSubject = () => {
 								display: "flex",
 								justifyContent: "space-between",
 								flexDirection: "column",
-								height: "fit-content",
 								gap: "1rem",
-								minHeight:"20vh"
+								minHeight:"20vh",
+								height:"100%"
 							}}
 						>
 							<Typography variant="h6">Previous year questions</Typography>
@@ -82,7 +82,7 @@ const TestSeriesSubject = () => {
 								display: "flex",
 								justifyContent: "space-between",
 								flexDirection: "column",
-								height: "fit-content",
+								height: "100%",
 								gap: "1rem",
 								minHeight:"20vh"
 							}}

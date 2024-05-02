@@ -39,6 +39,7 @@ export type StudyContextType = {
 	totalTimeSpent: number;
 	questions: questionType[];
 	questionsLoader: boolean;
+	loadingChat: boolean;
 };
 
 export const StudyContext = createContext<StudyContextType>({
@@ -51,6 +52,7 @@ export const StudyContext = createContext<StudyContextType>({
 	totalTimeSpent: 0,
 	questions: [],
 	questionsLoader: false,
+	loadingChat: false,
 });
 
 const StudyContextProvider = ({ children }: Props) => {
@@ -60,6 +62,7 @@ const StudyContextProvider = ({ children }: Props) => {
 	);
 	const [pdfList, setPdfList] = React.useState<pdfType[]>([]);
 	const [chats, setChats] = React.useState<chatType[]>([]);
+	const [loadingChat, setLoadingChat] = React.useState<boolean>(false);
 	const [totalTimeSpent, setTotalTimeSpent] = useState(0);
 	const startTime = useMemo(() => {
 		const storedStartTime = parseInt(
@@ -167,6 +170,7 @@ const StudyContextProvider = ({ children }: Props) => {
 	};
 
 	const addChat = (message: string) => {
+		setLoadingChat(true);
 		setChats([
 			...chats,
 			{ id: 0, subject: 0, created_at: "", from_type: "USER", message },
@@ -181,11 +185,13 @@ const StudyContextProvider = ({ children }: Props) => {
 			)
 			.then((res) => {
 				setChats(res.data);
+				setLoadingChat(false);
 			})
 			.catch((err) => {
 				enqueueSnackbar(formatHttpApiError(err), {
 					variant: "error",
 				});
+				setLoadingChat(false);
 			});
 	};
 	return (
@@ -200,6 +206,7 @@ const StudyContextProvider = ({ children }: Props) => {
 				totalTimeSpent,
 				questions,
 				questionsLoader,
+				loadingChat,
 			}}
 		>
 			{children}

@@ -19,7 +19,7 @@ const FrequentlyAsked = () => {
 			component={Paper}
 			sx={{
 				p: 2,
-				height: "35vh",
+				minHeight: "35vh",
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "space-between",

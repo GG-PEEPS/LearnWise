@@ -12,13 +12,15 @@ import ChatMessage from "./ChatMessage/ChatMessage";
 
 const Chat = () => {
 	const messagesEndRef = useRef<null | HTMLDivElement>(null);
-	const { subjectName, chats, addChat } = useContext(StudyContext);
+	const { subjectName, chats, addChat, loadingChat } = useContext(StudyContext);
 	const [message, setMessage] = useState("" as string);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleSubmit = () => {
+		setLoading(true);
 		addChat(message);
 		setMessage("");
+		setLoading(false);
 	};
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,9 +29,6 @@ const Chat = () => {
 	useEffect(() => {
 		scrollToBottom();
 	}, [chats]);
-	useEffect(() => {
-		scrollToBottom();
-	}, []);
 
 	return (
 		<Box
@@ -58,6 +57,7 @@ const Chat = () => {
 				{chats.map((chat) => (
 					<ChatMessage key={chat.id} chat={chat} />
 				))}
+				{loadingChat && <LinearProgress />}
 				<div ref={messagesEndRef} />
 			</Box>
 			<Box
@@ -70,7 +70,6 @@ const Chat = () => {
 					gap: 2,
 				}}
 			>
-				{loading && <LinearProgress />}
 				<TextField
 					variant="outlined"
 					fullWidth

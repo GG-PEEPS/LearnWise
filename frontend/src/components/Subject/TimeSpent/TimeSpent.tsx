@@ -20,11 +20,12 @@ const TimeSpent = () => {
 			component={Paper}
 			sx={{
 				p: 2,
-				height: "35vh",
+				minHeight: "35vh",
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "center",
 				alignItems: "center",
+				height:"100%"
 			}}
 		>
 			<Typography variant="h5" gutterBottom>
